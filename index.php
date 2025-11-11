@@ -1,5 +1,16 @@
 <?php
 session_start();
+$isLoggedIn = false;
+$nama_user = '';
+
+if (isset($_SESSION['member_name'])) {
+    $isLoggedIn = true;
+    $nama_user = $_SESSION['member_name'];
+} 
+else if (isset($_SESSION['user_name'])) {
+    $isLoggedIn = true;
+    $nama_user = $_SESSION['user_name'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,9 +21,10 @@ session_start();
 </head>
 <body>
     <?php
-    if (isset($_SESSION['name'])) :
+    if ($isLoggedIn) :
     ?>
-        <h1>Selamat datang kembali, <?php echo htmlspecialchars($_SESSION['name']); ?>!</h1>
+        <h1>Selamat datang kembali, <?php echo htmlspecialchars($nama_user); ?>!</h1>
+        
         <p>Anda sekarang sudah masuk ke sistem Perpustakaan Tadika Pertiwi.</p>
         <a href="dashboard.php"><button type="button">Pergi ke Dashboard</button></a>
         <a href="logout.php"><button type="button">Keluar</button></a>

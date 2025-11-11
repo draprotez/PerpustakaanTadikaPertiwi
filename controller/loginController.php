@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_update->execute();
                     $stmt_update->close();
 
-                    header("Location: ../dashboard_member.php");
+                    header("Location: ../index.php");
                     exit();
 
                 } else {
@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_update->execute();
                     $stmt_update->close();
 
-                    header("Location: ../dashboard_admin.php");
+                    header("Location: ../views/dashboardAdmin.php");
                     exit();
 
                 } else {
