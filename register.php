@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,6 +39,11 @@
         <input type="email" name="email" id="email" placeholder="Email" required>
         <input type="text" name="no_hp" id="no_hp" placeholder="No Telp" required>
         <input type="text" name="alamat" id="alamat" placeholder="Alamat" required>
+        <?php
+        if(isset($_GET['error'])) {
+            echo '<p> class="error">' . htmlspecialchars($_GET['error']) . '</p>';
+        }
+        ?>
         <button type="submit">Daftar</button>
     </form>
     <p><a href="login.php">Login</a></p>
