@@ -49,22 +49,18 @@
     <p><a href="login.php">Login</a></p>
 
     <script>
-        // Ambil elemen div
         var siswaDiv = document.getElementById('siswa');
         var guruDiv = document.getElementById('guru');
-        
-        // Ambil semua input di dalam div masing-masing
+
         var siswaInputs = siswaDiv.querySelectorAll('input');
         var guruInputs = guruDiv.querySelectorAll('input');
 
-        // Fungsi untuk mengubah status disabled input
         function setInputsDisabled(inputs, disabled) {
             inputs.forEach(function(input) {
                 input.disabled = disabled;
             });
         }
 
-        // Atur kondisi awal: Nonaktifkan semua input khusus saat halaman dimuat
         setInputsDisabled(siswaInputs, true);
         setInputsDisabled(guruInputs, true);
 
@@ -72,25 +68,20 @@
             var tipe = this.value;
 
             if (tipe === 'siswa') {
-                // Tampilkan Siswa, Aktifkan inputnya
                 siswaDiv.style.display = 'block';
                 setInputsDisabled(siswaInputs, false);
-                
-                // Sembunyikan Guru, Nonaktifkan inputnya
+
                 guruDiv.style.display = 'none';
                 setInputsDisabled(guruInputs, true);
 
             } else if (tipe === 'guru') {
-                // Sembunyikan Siswa, Nonaktifkan inputnya
                 siswaDiv.style.display = 'none';
                 setInputsDisabled(siswaInputs, true);
-                
-                // Tampilkan Guru, Aktifkan inputnya
+
                 guruDiv.style.display = 'block';
                 setInputsDisabled(guruInputs, false);
 
             } else {
-                // Sembunyikan & Nonaktifkan keduanya
                 siswaDiv.style.display = 'none';
                 setInputsDisabled(siswaInputs, true);
                 

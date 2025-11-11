@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mapel = $_POST['mapel'];
         $kelas = $_POST['kelas_guru'];
         $keterangan = $mapel;
-        $kode_member = 'G-' . strtoupper(uniqid());
+        $kode_member = 'TP-' . strtoupper(uniqid());
     }
 
     try {
