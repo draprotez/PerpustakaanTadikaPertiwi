@@ -1,65 +1,77 @@
 <?php
-class Buku {
-    private $conn;
-    private $table_name = "buku";    public $id;
-    public $judul_buku;
-    public $penulis;
-    public $isbn;
-    public $penerbit;
-    public $tahun_terbit;
-    public $total_copy;
-    public $salinan_tersedia;
-    public $lokasi_rak;
-    public $kode_buku;
+// bukuModels.php
+function getAllBuku($conn) {
+    $sql = "SELECT * FROM buku ORDER BY judul_buku ASC";
+    $result = $conn->query($sql);
+    return $result->fetch_all(MYSQLI_ASSOC); 
+}
 
-    public function __construct($db) {
-        $this->conn = $db;
-    }
+function getBukuById($conn, $id) {
+    $sql = "SELECT * FROM buku WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
+}
 
-    public function readAll() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY judul_buku ASC";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        return $result;
-    }
+function insertBuku($conn, $data) {
+    //
+    $sql = "INSERT INTO buku 
+                (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, lokasi_rak) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
 
-    public function create() {
-        $query = "INSERT INTO " . $this->table_name . " 
-                  (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, lokasi_rak) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->conn->prepare($query);
+    $salinan_tersedia = $data['total_copy']; 
+    
+    $stmt->bind_param("ssssssiis", 
+        $data['kode_buku'], 
+        $data['judul_buku'], 
+        $data['penulis'],
+        $data['isbn'],
+        $data['penerbit'],
+        $data['tahun_terbit'],
+        $data['total_copy'],
+        $salinan_tersedia,
+        $data['lokasi_rak']
+    );
+    return $stmt->execute();
+}
 
-        $this->kode_buku = htmlspecialchars(strip_tags($this->kode_buku));
-        $this->judul_buku = htmlspecialchars(strip_tags($this->judul_buku));
-        $this->penulis = htmlspecialchars(strip_tags($this->penulis));
-        $this->isbn = htmlspecialchars(strip_tags($this->isbn));
-        $this->penerbit = htmlspecialchars(strip_tags($this->penerbit));
-        $this->tahun_terbit = htmlspecialchars(strip_tags($this->tahun_terbit));
-        $this->total_copy = htmlspecialchars(strip_tags($this->total_copy));
-        $this->salinan_tersedia = htmlspecialchars(strip_tags($this->salinan_tersedia));
-        $this->lokasi_rak = htmlspecialchars(strip_tags($this->lokasi_rak));
+function updateBuku($conn, $data) {
+    //
+    $sql = "UPDATE buku SET 
+                kode_buku = ?, 
+                judul_buku = ?, 
+                penulis = ?, 
+                isbn = ?, 
+                penerbit = ?, 
+                tahun_terbit = ?, 
+                total_copy = ?, 
+                salinan_tersedia = ?, 
+                lokasi_rak = ?
+            WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssssiisi", 
+        $data['kode_buku'], 
+        $data['judul_buku'], 
+        $data['penulis'],
+        $data['isbn'],
+        $data['penerbit'],
+        $data['tahun_terbit'],
+        $data['total_copy'],
+        $data['salinan_tersedia'],
+        $data['lokasi_rak'],
+        $data['id']
+    );
+    return $stmt->execute();
+}
 
-        $stmt->bind_param(
-            "ssssssiis",
-            $this->kode_buku,
-            $this->judul_buku,
-            $this->penulis,
-            $this->isbn,
-            $this->penerbit,
-            $this->tahun_terbit,
-            $this->total_copy,
-            $this->salinan_tersedia,
-            $this->lokasi_rak
-        );
-        
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
-    }
+function deleteBuku($conn, $id) {
+    //
+    $sql = "DELETE FROM buku WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
 }
 ?>
