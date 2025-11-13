@@ -29,7 +29,7 @@ $daftarBuku = $bukuModel->readAll();
     }
     ?>
 
-    <p><a href="create.php"><button>+ Tambah Buku Baru</button></a></p>
+    <p><a href="bukuController.php"><button>+ Tambah Buku Baru</button></a></p>
 
     <table>
         <thead>
