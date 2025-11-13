@@ -1,9 +1,24 @@
 <?php
-// bukuModels.php
-function getAllBuku($conn) {
-    $sql = "SELECT * FROM buku ORDER BY judul_buku ASC";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC); 
+// models/bukuModels.php
+function getAllBuku($conn, $search = null) {
+    
+    $sql = "SELECT * FROM buku";
+
+    if ($search) {
+        $sql .= " WHERE judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?";
+        $searchTerm = "%" . $search . "%";
+    }
+    
+    $sql .= " ORDER BY judul_buku ASC";
+    $stmt = $conn->prepare($sql);
+
+    if ($search) {
+        $stmt->bind_param("ssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+    }
+    
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 function getBukuById($conn, $id) {
@@ -16,12 +31,11 @@ function getBukuById($conn, $id) {
 }
 
 function insertBuku($conn, $data) {
-    //
     $sql = "INSERT INTO buku 
                 (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, lokasi_rak) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-
+    
     $salinan_tersedia = $data['total_copy']; 
     
     $stmt->bind_param("ssssssiis", 
@@ -39,7 +53,6 @@ function insertBuku($conn, $data) {
 }
 
 function updateBuku($conn, $data) {
-    //
     $sql = "UPDATE buku SET 
                 kode_buku = ?, 
                 judul_buku = ?, 
@@ -68,7 +81,6 @@ function updateBuku($conn, $data) {
 }
 
 function deleteBuku($conn, $id) {
-    //
     $sql = "DELETE FROM buku WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
