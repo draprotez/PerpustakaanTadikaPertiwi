@@ -46,6 +46,7 @@
         <button type="submit">Daftar</button>
     </form>
 
+    <p><a href="registrasiAdmin.php">admin</a></p>
     <p><a href="login.php">Login</a></p>
 
     <script>
