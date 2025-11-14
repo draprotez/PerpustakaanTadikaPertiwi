@@ -1,5 +1,5 @@
 <?php
-// views/kelolaBukuViews.php
+// views/bukuViews.php
 session_start();
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) { 
     header("Location: ../login.php"); 
@@ -114,11 +114,11 @@ $buku_list = getAllBuku($conn, $search);
     <button class="btn-tambah" onclick="openForm('createForm')">Tambah Buku Baru</button>
 
     <hr>
-    <form action="kelolaBukuViews.php" method="GET">
+    <form action="bukuViews.php" method="GET">
         <label for="search">Cari Buku (Judul, Kode, Penulis):</label>
         <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>">
         <button type="submit">Cari</button>
-        <a href="kelolaBukuViews.php"></a>
+        <a href="bukuViews.php"></a>
     </form>
     <hr>
     
