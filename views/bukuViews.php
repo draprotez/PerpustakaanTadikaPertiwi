@@ -7,11 +7,39 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) {
 }
 
 include '../config/database.php';
-include '../models/bukuModels.php';
+include '../models/bukuModels.php'; //
 
-$search = $_GET['search'] ?? '';
+// ▼▼▼ LOGIKA PAGINATION (DARI FILE PERTAMA) ▼▼▼
 
-$buku_list = getAllBuku($conn, $search); 
+$search = $_GET['search'] ?? ''; //
+
+// 1. Tentukan batas data per halaman
+$limit = 10; // (Anda bisa ubah angka ini, misal 15 atau 20)
+
+// 2. Ambil total data (dengan filter pencarian jika ada)
+$totalResults = countAllBuku($conn, $search); //
+
+// 3. Hitung total halaman
+$totalPages = ceil($totalResults / $limit); //
+
+// 4. Tentukan halaman saat ini
+$page = (int)($_GET['page'] ?? 1); //
+if ($page < 1) { //
+    $page = 1; //
+} elseif ($page > $totalPages && $totalPages > 0) { //
+    $page = $totalPages; //
+}
+
+// 5. Hitung OFFSET untuk query SQL
+$offset = ($page - 1) * $limit; //
+
+// 6. Ambil data buku sesuai halaman, batas, dan pencarian
+$buku_list = getAllBuku($conn, $search, $limit, $offset); //
+
+// 7. Siapkan parameter URL untuk link pagination
+$searchParam = $search ? '&search=' . htmlspecialchars($search) : ''; //
+
+// ▲▲▲ AKHIR LOGIKA PAGINATION ▲▲▲
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -20,23 +48,24 @@ $buku_list = getAllBuku($conn, $search);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Data Buku</title>
     <style>
+        /* [CSS LENGKAP DARI FILE KEDUA] */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-        }
+        } /* */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-        }
+        } /* */
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
-        }
+        } /* */
         th {
             background-color: #f2f2f2;
-        }
+        } /* */
         .modal {
             display: none;
             position: fixed;
@@ -46,7 +75,7 @@ $buku_list = getAllBuku($conn, $search);
             height: 100%;
             background-color: rgba(0,0,0,0.5);
             z-index: 1000;
-        }
+        } /* */
         .modal-content {
             background-color: white;
             position: absolute;
@@ -59,75 +88,93 @@ $buku_list = getAllBuku($conn, $search);
             overflow-y: auto;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
+        } /* */
         .form-group {
             margin-bottom: 15px;
-        }
+        } /* */
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-        }
+        } /* */
         .form-group input {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 3px;
-        }
+        } /* */
         .button-group {
             margin-top: 20px;
             text-align: right;
-        }
+        } /* */
         button {
             padding: 8px 15px;
             cursor: pointer;
             border: none;
             border-radius: 3px;
             margin-left: 5px;
-        }
+        } /* */
         button[type="submit"] {
             background-color: #4CAF50;
             color: white;
-        }
+        } /* */
         button[type="button"] {
             background-color: #f44336;
             color: white;
-        }
+        } /* */
         .btn-tambah {
             background-color: #008CBA;
             color: white;
             padding: 10px 15px;
             margin-bottom: 15px;
-        }
+        } /* */
         .btn-logout {
             background-color: red;
             color: white;
             padding: 8px 15px;
-        }
+        } /* */
+        
+        /* [CSS PAGINATION DARI FILE PERTAMA] */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        } /* */
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #008CBA;
+        } /* */
+        .pagination span.current {
+            background-color: #008CBA;
+            color: white;
+            border-color: #008CBA;
+        } /* */
+        .pagination a.disabled {
+            color: #999;
+            pointer-events: none;
+            background-color: #f5f5f5;
+        } /* */
+
     </style>
 </head>
 <body>
 
     <h1>Kelola Data Buku</h1>
 
-    <button class="btn-tambah" onclick="openForm('createForm')">Tambah Buku Baru</button>
-
-    <hr>
-    <form action="bukuViews.php" method="GET">
-        <label for="search">Cari Buku (Judul, Kode, Penulis):</label>
-        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>">
-        <button type="submit">Cari</button>
-        <a href="bukuViews.php"></a>
+    <button class="btn-tambah" onclick="openForm('createForm')">Tambah Buku Baru</button> <hr>
+    <form action="bukuViews.php" method="GET"> <label for="search">Cari Buku (Judul, Kode, Penulis):</label>
+        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>"> <button type="submit">Cari</button> <a href="bukuViews.php">Hapus Filter</a>
     </form>
     <hr>
     
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;"><b><?php echo htmlspecialchars($_GET['success']); ?></b></p>
+    <?php if (isset($_GET['success'])): ?> <p style="color: green;"><b><?php echo htmlspecialchars($_GET['success']); ?></b></p>
     <?php endif; ?>
     
-    <?php if (isset($_GET['error'])): ?>
-        <p style="color: red;"><b><?php echo htmlspecialchars($_GET['error']); ?></b></p>
+    <?php if (isset($_GET['error'])): ?> <p style="color: red;"><b><?php echo htmlspecialchars($_GET['error']); ?></b></p>
     <?php endif; ?>
 
     <table>
@@ -140,24 +187,19 @@ $buku_list = getAllBuku($conn, $search);
                 <th>Penerbit</th>
                 <th>Tahun</th>
                 <th>Stok (Tersedia/Total)</th>
-                <th>Lokasi Rak</th>
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (empty($buku_list)): ?>
-                <tr>
+            <?php if (empty($buku_list)): ?> <tr>
                     <td colspan="9" align="center">
-                        <?php if ($search): ?>
-                            Data buku dengan kata kunci "<?php echo htmlspecialchars($search); ?>" tidak ditemukan.
+                        <?php if ($search): ?> Data buku dengan kata kunci "<?php echo htmlspecialchars($search); ?>" tidak ditemukan.
                         <?php else: ?>
-                            Belum ada data buku.
-                        <?php endif; ?>
+                            Belum ada data buku. <?php endif; ?>
                     </td>
                 </tr>
             <?php else: ?>
-                <?php foreach ($buku_list as $buku): ?>
-                    <tr>
+                <?php foreach ($buku_list as $buku): ?> <tr>
                         <td><?php echo $buku['id']; ?></td>
                         <td><?php echo htmlspecialchars($buku['kode_buku']); ?></td>
                         <td><?php echo htmlspecialchars($buku['judul_buku']); ?></td>
@@ -165,7 +207,6 @@ $buku_list = getAllBuku($conn, $search);
                         <td><?php echo htmlspecialchars($buku['penerbit']); ?></td>
                         <td><?php echo htmlspecialchars($buku['tahun_terbit']); ?></td>
                         <td><?php echo $buku['salinan_tersedia'] . ' / ' . $buku['total_copy']; ?></td>
-                        <td><?php echo htmlspecialchars($buku['lokasi_rak']); ?></td>
                         <td>
                             <button type="button" 
                                     onclick="openEditBukuForm(this)"
@@ -178,26 +219,31 @@ $buku_list = getAllBuku($conn, $search);
                                     data-tahun="<?php echo htmlspecialchars($buku['tahun_terbit']); ?>"
                                     data-total="<?php echo $buku['total_copy']; ?>"
                                     data-tersedia="<?php echo $buku['salinan_tersedia']; ?>"
-                                    data-rak="<?php echo htmlspecialchars($buku['lokasi_rak']); ?>">
                                 Edit
-                            </button>
-                            <button type="button" 
+                            </button> <button type="button" 
                                     onclick="openDeleteConfirm(this)"
                                     data-url="../controller/bukuController.php?action=delete&id=<?php echo $buku['id']; ?>">
                                 Delete
-                            </button>
-                        </td>
+                            </button> </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
+
+    <div class="pagination">
+        <?php if ($totalPages > 1): // Hanya tampilkan jika halaman lebih dari 1 ?> <a href="?page=<?php echo $page - 1; ?><?php echo $searchParam; ?>"
+               class="<?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                &laquo; Previous
+            </a> <span class="current">
+                Halaman <?php echo $page; ?> dari <?php echo $totalPages; ?>
+            </span> <a href="?page=<?php echo $page + 1; ?><?php echo $searchParam; ?>"
+               class="<?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                Next &raquo;
+            </a> <?php endif; ?>
+    </div>
     <br>
-    <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
-    
-    <!-- Modal Tambah Buku -->
-    <div id="createForm" class="modal">
-        <div class="modal-content">
+    <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button> <div id="createForm" class="modal"> <div class="modal-content">
             <h2>Form Tambah Buku Baru</h2>
             <form action="../controller/bukuController.php" method="POST">
                 <input type="hidden" name="action" value="create">
@@ -237,11 +283,6 @@ $buku_list = getAllBuku($conn, $search);
                     <input type="number" step="1" min="1" name="total_copy" value="1" required>
                 </div>
                 
-                <div class="form-group">
-                    <label>Lokasi Rak:</label>
-                    <input type="text" name="lokasi_rak">
-                </div>
-                
                 <div class="button-group">
                     <button type="submit">Simpan</button> 
                     <button type="button" onclick="closeForm('createForm')">Batal</button>
@@ -250,9 +291,7 @@ $buku_list = getAllBuku($conn, $search);
         </div>
     </div>
     
-    <!-- Modal Edit Buku -->
-    <div id="editForm" class="modal">
-        <div class="modal-content">
+    <div id="editForm" class="modal"> <div class="modal-content">
             <h2>Form Edit Buku</h2>
             <form action="../controller/bukuController.php" method="POST">
                 <input type="hidden" name="id" id="edit_id">
@@ -298,11 +337,6 @@ $buku_list = getAllBuku($conn, $search);
                     <input type="number" step="1" min="0" id="edit_salinan_tersedia" name="salinan_tersedia" required>
                 </div>
                 
-                <div class="form-group">
-                    <label>Lokasi Rak:</label>
-                    <input type="text" id="edit_lokasi_rak" name="lokasi_rak">
-                </div>
-                
                 <div class="button-group">
                     <button type="submit">Update</button> 
                     <button type="button" onclick="closeForm('editForm')">Batal</button>
@@ -311,9 +345,7 @@ $buku_list = getAllBuku($conn, $search);
         </div>
     </div>
     
-    <!-- Modal Konfirmasi Hapus -->
-    <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
+    <div id="deleteConfirmModal" class="modal"> <div class="modal-content">
             <p>Yakin ingin hapus buku ini?</p>
             <div class="button-group">
                 <button type="button" onclick="confirmDelete()">Ya, Hapus</button>
@@ -326,11 +358,11 @@ $buku_list = getAllBuku($conn, $search);
     <script>
         function openForm(modalId) {
             document.getElementById(modalId).style.display = 'block'; 
-        }
+        } /* */
 
         function closeForm(modalId) {
             document.getElementById(modalId).style.display = 'none';
-        }
+        } /* */
 
         function openEditBukuForm(buttonElement) {
             document.getElementById('edit_id').value = buttonElement.getAttribute('data-id');
@@ -342,16 +374,15 @@ $buku_list = getAllBuku($conn, $search);
             document.getElementById('edit_tahun_terbit').value = buttonElement.getAttribute('data-tahun');
             document.getElementById('edit_total_copy').value = buttonElement.getAttribute('data-total');
             document.getElementById('edit_salinan_tersedia').value = buttonElement.getAttribute('data-tersedia');
-            document.getElementById('edit_lokasi_rak').value = buttonElement.getAttribute('data-rak');
            
             openForm('editForm');
-        }
+        } /* */
 
         function openDeleteConfirm(buttonElement) {
             const deleteUrl = buttonElement.getAttribute('data-url');
             document.getElementById('deleteUrlInput').value = deleteUrl;
             openForm('deleteConfirmModal');
-        }
+        } /* */
 
         function confirmDelete() {
             const deleteUrl = document.getElementById('deleteUrlInput').value;
@@ -360,7 +391,7 @@ $buku_list = getAllBuku($conn, $search);
             } else {
                 alert('Error: URL Hapus tidak ditemukan!');
             }
-        }
+        } /* */
 
         // Tutup modal jika klik di luar konten modal
         window.onclick = function(event) {
@@ -370,7 +401,7 @@ $buku_list = getAllBuku($conn, $search);
                     modal.style.display = 'none';
                 }
             });
-        }
+        } /* */
     </script>
 
 </body>

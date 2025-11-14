@@ -1,26 +1,36 @@
 <?php
 // models/bukuModels.php
-function getAllBuku($conn, $search = null) {
-    
+function getAllBuku($conn, $search = null, $limit, $offset) {
     $sql = "SELECT * FROM buku";
-
+    $searchTerm = "%" . $search . "%";
     if ($search) {
-        $sql .= " WHERE judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?";
-        $searchTerm = "%" . $search . "%";
+        $sql .= " WHERE (judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?)";
     }
-    
-    $sql .= " ORDER BY judul_buku ASC";
+    $sql .= " ORDER BY judul_buku ASC LIMIT ? OFFSET ?"; // Tambahkan LIMIT dan OFFSET
     $stmt = $conn->prepare($sql);
-
     if ($search) {
-        $stmt->bind_param("ssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+        $stmt->bind_param("ssssii", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
+    } else {
+        $stmt->bind_param("ii", $limit, $offset);
     }
-    
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->fetch_all(MYSQLI_ASSOC);
 }
-
+function countAllBuku($conn, $search = null) {
+    $sql = "SELECT COUNT(*) as total FROM buku";
+    $searchTerm = "%" . $search . "%";
+    if ($search) {
+        $sql .= " WHERE (judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?)";
+    }
+    $stmt = $conn->prepare($sql);
+    if ($search) {
+        $stmt->bind_param("ssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc()['total'];
+}
 function getBukuById($conn, $id) {
     $sql = "SELECT * FROM buku WHERE id = ?";
     $stmt = $conn->prepare($sql);
@@ -29,15 +39,14 @@ function getBukuById($conn, $id) {
     $result = $stmt->get_result();
     return $result->fetch_assoc();
 }
-
 function insertBuku($conn, $data) {
     $sql = "INSERT INTO buku 
                 (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, lokasi_rak) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    
+
     $salinan_tersedia = $data['total_copy']; 
-    
+
     $stmt->bind_param("ssssssiis", 
         $data['kode_buku'], 
         $data['judul_buku'], 
@@ -51,7 +60,6 @@ function insertBuku($conn, $data) {
     );
     return $stmt->execute();
 }
-
 function updateBuku($conn, $data) {
     $sql = "UPDATE buku SET 
                 kode_buku = ?, 
@@ -79,7 +87,6 @@ function updateBuku($conn, $data) {
     );
     return $stmt->execute();
 }
-
 function deleteBuku($conn, $id) {
     $sql = "DELETE FROM buku WHERE id = ?";
     $stmt = $conn->prepare($sql);
