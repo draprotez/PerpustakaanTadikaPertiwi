@@ -24,7 +24,6 @@ else if (isset($_SESSION['user_name'])) {
     if ($isLoggedIn) :
     ?>
         <h1>Selamat datang kembali, <?php echo htmlspecialchars($nama_user); ?>!</h1>
-        
         <p>Anda sekarang sudah masuk ke sistem Perpustakaan Tadika Pertiwi.</p>
         <a href="dashboard.php"><button type="button">Pergi ke Dashboard</button></a>
         <a href="logout.php"><button type="button">Keluar</button></a>
