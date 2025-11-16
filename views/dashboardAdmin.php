@@ -7,6 +7,7 @@ $isAdmin = false;
 $nama_user = '';
 $total_buku = 0;
 $total_member = 0;
+$total_overdue = 0;
 $active_loans = [];
 $search = $_GET['search'] ?? '';
 
@@ -26,6 +27,11 @@ if (isset($_SESSION['user_id'])) {
     $stmt_member->execute();
     $total_member = $stmt_member->get_result()->fetch_assoc()['total'];
     
+    $sql_total_overdue = "SELECT COUNT(*) as total FROM peminjaman WHERE status = 'overdue'";
+    $stmt_overdue = $conn->prepare($sql_total_overdue);
+    $stmt_overdue->execute();
+    $total_overdue = $stmt_overdue->get_result()->fetch_assoc()['total'];
+
     $sql_active_loans = "
         SELECT 
             p.status,
@@ -58,12 +64,6 @@ if (isset($_SESSION['user_id'])) {
     while ($row = $active_loans_result->fetch_assoc()) {
         $active_loans[] = $row;
     }
-
-} 
-else if (isset($_SESSION['member_id'])) {
-    $isLoggedIn = true;
-    $isAdmin = false;
-    $nama_user = $_SESSION['member_name'];
 }
 
 $conn->close();
@@ -90,6 +90,8 @@ $conn->close();
         .loan-table th { background-color: #f2f2f2; }
         .status-overdue { color: #D32F2F; font-weight: bold; }
         .status-borrowed { color: #388E3C; }
+        .dashboard-box.overdue .count { color: #D32F2F; }
+        .access-denied { text-align: center; margin: 50px; padding: 20px; background-color: #ffebee; border: 1px solid #f44336; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -109,6 +111,12 @@ $conn->close();
                 <h3>Total Anggota</h3>
                 <p class="count"><?php echo $total_member; ?></p>
                 <a href="memberViews.php">Kelola Anggota &raquo;</a>
+            </div>
+
+            <div class="dashboard-box <?php echo ($total_overdue > 0) ? 'overdue' : ''; ?>">
+                <h3>Buku Kadaluarsa</h3>
+                <p class="count"><?php echo $total_overdue; ?></p>
+                <a href="kelolaPeminjamanViews.php">Kelola Peminjaman &raquo;</a>
             </div>
         </div>
 
@@ -177,16 +185,13 @@ $conn->close();
         <hr>
         <a href="../logout.php"><button type="button">Keluar</button></a>
     
-    <?php elseif ($isLoggedIn && !$isAdmin) : ?>
-        <h1>Selamat datang kembali, <?php echo htmlspecialchars($nama_user); ?>!</h1>
-        <p>Anda sekarang sudah masuk ke sistem Perpustakaan Tadika Pertiwi.</p>
-        <a href="profil.php"><button type="button">Lihat Profil</button></a>
-        <a href="../logout.php"><button type="button">Keluar</button></a>
-
     <?php else : ?>
-        <h1>Selamat datang di perpustakaan tadika Pertiwi</h1>
-        <a href="login.php"><button type="button">Masuk</button></a>
-        <a href="register.php"><button type="button">Daftar</button></a>
+        <div class="access-denied">
+            <h2>Akses Ditolak</h2>
+            <p>Halaman ini hanya dapat diakses oleh petugas perpustakaan.</p>
+            <p>Silakan <a href="../login.php">login sebagai petugas</a> untuk mengakses dashboard.</p>
+            <a href="../index.php"><button type="button">Kembali ke Halaman Utama</button></a>
+        </div>
     <?php endif; ?>
 </body>
 </html>
