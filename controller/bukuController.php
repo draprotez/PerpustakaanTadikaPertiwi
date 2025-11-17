@@ -7,11 +7,44 @@ include '../models/bukuModels.php';
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) { 
     die("ERROR: Anda harus login untuk mengakses ini!"); 
 }
+
+function handleImageUpload($fileInput, $existingImage = null) {
+    $target_dir = "../assets/images/buku/";
+    
+    if (isset($fileInput) && $fileInput['error'] == 0) {
+        $imageFileType = strtolower(pathinfo($fileInput["name"], PATHINFO_EXTENSION));
+        $new_filename = 'cover_' . uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $new_filename;
+
+        $check = getimagesize($fileInput["tmp_name"]);
+        if ($check === false) return (object)['error' => "File bukan gambar."];
+        if ($fileInput["size"] > 2000000) return (object)['error' => "Ukuran file terlalu besar (Max 2MB)."];
+        if (!in_array($imageFileType, ["jpg", "png", "jpeg", "svg"])) return (object)['error' => "Hanya format JPG, JPEG, PNG, & SVG."];
+
+        if (move_uploaded_file($fileInput["tmp_name"], $target_file)) {
+            if ($existingImage && file_exists($target_dir . $existingImage)) {
+                unlink($target_dir . $existingImage);
+            }
+            return (object)['filename' => $new_filename];
+        } else {
+            return (object)['error' => "Gagal mengupload file."];
+        }
+    }
+    return (object)['filename' => $existingImage];
+}
+
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 switch ($action) {
     case 'create':
         if (isset($_POST['judul_buku'])) {
+            
+            $uploadResult = handleImageUpload($_FILES['gambar'] ?? null);
+            if (isset($uploadResult->error)) {
+                header("Location: ../views/bukuViews.php?error=" . urlencode($uploadResult->error));
+                exit();
+            }
+
             $data = [
                 'kode_buku' => $_POST['kode_buku'],
                 'judul_buku' => $_POST['judul_buku'],
@@ -20,20 +53,29 @@ switch ($action) {
                 'penerbit' => $_POST['penerbit'],
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'total_copy' => $_POST['total_copy'],
-                'lokasi_rak' => $_POST['lokasi_rak']
+                'gambar' => $uploadResult->filename
             ];
+            
             $result = insertBuku($conn, $data);
             
             if ($result) {
-                header("Location: ../views/kelolaBukuViews.php?success=Buku baru berhasil ditambahkan!");
+                header("Location: ../views/bukuViews.php?success=Buku baru berhasil ditambahkan!");
             } else {
-                header("Location: ../views/kelolaBukuViews.php?error=Gagal menambahkan data buku!");
+                header("Location: ../views/bukuViews.php?error=Gagal menambahkan data buku!");
             }
         }
         break;
 
     case 'update':
         if (isset($_POST['id'])) {
+
+            $gambar_lama = $_POST['gambar_lama'] ?? null;
+            $uploadResult = handleImageUpload($_FILES['gambar'] ?? null, $gambar_lama);
+            if (isset($uploadResult->error)) {
+                header("Location: ../views/bukuViews.php?error=" . urlencode($uploadResult->error));
+                exit();
+            }
+
             $data = [
                 'id' => $_POST['id'],
                 'kode_buku' => $_POST['kode_buku'],
@@ -44,14 +86,15 @@ switch ($action) {
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'total_copy' => $_POST['total_copy'],
                 'salinan_tersedia' => $_POST['salinan_tersedia'],
-                'lokasi_rak' => $_POST['lokasi_rak']
+                'gambar' => $uploadResult->filename
             ];
+            
             $result = updateBuku($conn, $data);
             
             if ($result) {
-                header("Location: ../views/kelolaBukuViews.php?success=Data buku berhasil diupdate!");
+                header("Location: ../views/bukuViews.php?success=Data buku berhasil diupdate!");
             } else {
-                header("Location: ../views/kelolaBukuViews.php?error=Gagal mengupdate data buku!");
+                header("Location: ../views/bukuViews.php?error=Gagal mengupdate data buku!");
             }
         }
         break;
@@ -59,18 +102,25 @@ switch ($action) {
     case 'delete':
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
+
+            $bukuData = getBukuById($conn, $id);
+            $gambar_lama = $bukuData['gambar'] ?? null;
+
             $result = deleteBuku($conn, $id);
             
             if ($result) {
-                header("Location: ../views/kelolaBukuViews.php?success=Data buku berhasil dihapus!");
+                if ($gambar_lama && file_exists('../assets/images/buku/' . $gambar_lama)) {
+                    unlink('../assets/images/buku/' . $gambar_lama);
+                }
+                header("Location: ../views/bukuViews.php?success=Data buku berhasil dihapus!");
             } else {
-                header("Location: ../views/kelolaBukuViews.php?error=Gagal menghapus data! (Mungkin buku sedang dipinjam)");
+                header("Location: ../views/bukuViews.php?error=Gagal menghapus data! (Mungkin buku sedang dipinjam)");
             }
         }
         break;
 
     default:
-        header("Location: ../views/kelolaBukuViews.php");
+        header("Location: ../views/bukuViews.php");
         break;
 }
 

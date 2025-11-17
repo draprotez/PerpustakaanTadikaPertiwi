@@ -121,10 +121,13 @@ $conn->close();
         </div>
 
         <div class="menu-links">
-            <a href="bukuViews.php">Kelola Buku</a>
-            <a href="peminjamanViews.php">Kelola Peminjaman</a>
-            <a href="memberViews.php">Kelola Anggota</a>
+            <a href="#">Dashboard</a>
+            <a href="bukuViews.php">Manajemen Buku</a>
+            <a href="peminjamanViews.php">Peminjaman</a>
+            <a href="memberViews.php">Anggota</a>
             <a href="laporanViews.php">Laporan</a>
+            <a href="adminProfilViews.php">Pengaturan</a>
+            <a href="../logout.php">Logout</a>
         </div>
         <hr style="margin-top: 20px;">
 
