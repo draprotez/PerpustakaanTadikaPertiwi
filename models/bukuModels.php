@@ -1,8 +1,7 @@
 <?php
 // models/bukuModels.php
-
 function getAllBuku($conn, $search = null, $limit, $offset) {
-    $sql = "SELECT id, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kode_buku FROM buku";
+    $sql = "SELECT id, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kode_buku, kelas FROM buku";
     $searchTerm = "%" . $search . "%";
     if ($search) {
         $sql .= " WHERE (judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?)";
@@ -45,13 +44,13 @@ function getBukuById($conn, $id) {
 
 function insertBuku($conn, $data) {
     $sql = "INSERT INTO buku 
-                (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kelas) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     $salinan_tersedia = $data['total_copy']; 
 
-    $stmt->bind_param("ssssssiss", 
+    $stmt->bind_param("ssssssisss", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
@@ -60,7 +59,8 @@ function insertBuku($conn, $data) {
         $data['tahun_terbit'],
         $data['total_copy'],
         $salinan_tersedia,
-        $data['gambar']
+        $data['gambar'],
+        $data['kelas']
     );
     return $stmt->execute();
 }
@@ -75,11 +75,12 @@ function updateBuku($conn, $data) {
                 tahun_terbit = ?, 
                 total_copy = ?, 
                 salinan_tersedia = ?, 
-                gambar = ?
+                gambar = ?,
+                kelas = ?
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
     
-    $stmt->bind_param("ssssssissi", 
+    $stmt->bind_param("ssssssisssi", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
@@ -89,6 +90,7 @@ function updateBuku($conn, $data) {
         $data['total_copy'],
         $data['salinan_tersedia'],
         $data['gambar'],
+        $data['kelas'],
         $data['id']
     );
     return $stmt->execute();

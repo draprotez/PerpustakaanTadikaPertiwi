@@ -52,6 +52,7 @@ switch ($action) {
                 'isbn' => $_POST['isbn'],
                 'penerbit' => $_POST['penerbit'],
                 'tahun_terbit' => $_POST['tahun_terbit'],
+                'kelas' => $_POST['kelas'],
                 'total_copy' => $_POST['total_copy'],
                 'gambar' => $uploadResult->filename
             ];
@@ -84,6 +85,7 @@ switch ($action) {
                 'isbn' => $_POST['isbn'],
                 'penerbit' => $_POST['penerbit'],
                 'tahun_terbit' => $_POST['tahun_terbit'],
+                'kelas' => $_POST['kelas'],
                 'total_copy' => $_POST['total_copy'],
                 'salinan_tersedia' => $_POST['salinan_tersedia'],
                 'gambar' => $uploadResult->filename

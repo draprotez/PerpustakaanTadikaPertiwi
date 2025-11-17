@@ -38,7 +38,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .modal-content { background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; width: 400px; max-height: 80vh; overflow-y: auto; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); } 
         .form-group { margin-bottom: 15px; } 
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; } 
-        .form-group input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; } 
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; } 
         .button-group { margin-top: 20px; text-align: right; } 
         button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; } 
         button[type="submit"] { background-color: #4CAF50; color: white; } 
@@ -49,16 +49,8 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; } 
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; } 
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; } 
-        .cover-image {
-            width: 60px;
-            height: 80px;
-            object-fit: cover;
-        }
-        .current-cover-preview {
-            max-width: 100px;
-            display: block;
-            margin-bottom: 10px;
-        }
+        .cover-image { width: 60px; height: 80px; object-fit: cover; }
+        .current-cover-preview { max-width: 100px; display: block; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -93,6 +85,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <th>Penulis</th>
                 <th>Penerbit</th>
                 <th>Tahun</th>
+                <th>Kelas</th>
                 <th>Total</th>
                 <th>Tersedia</th>
                 <th>Aksi</th>
@@ -101,7 +94,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <tbody>
             <?php if (empty($buku_list)): ?>
                 <tr>
-                    <td colspan="10" align="center">
+                    <td colspan="11" align="center">
                         <?php if ($search): ?>
                             Data buku "<?php echo htmlspecialchars($search); ?>" tidak ditemukan.
                         <?php else: ?>
@@ -127,6 +120,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                         <td><?php echo htmlspecialchars($buku['penulis']); ?></td>
                         <td><?php echo htmlspecialchars($buku['penerbit']); ?></td>
                         <td><?php echo htmlspecialchars($buku['tahun_terbit']); ?></td>
+                        <td><?php echo htmlspecialchars($buku['kelas'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($buku['total_copy']); ?></td>
                         <td><?php echo htmlspecialchars($buku['salinan_tersedia']); ?></td>
                         <td>
@@ -139,6 +133,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                                     data-isbn="<?php echo htmlspecialchars($buku['isbn'] ?? ''); ?>"
                                     data-penerbit="<?php echo htmlspecialchars($buku['penerbit'] ?? ''); ?>"
                                     data-tahun="<?php echo htmlspecialchars($buku['tahun_terbit'] ?? ''); ?>"
+                                    data-kelas="<?php echo htmlspecialchars($buku['kelas'] ?? ''); ?>" 
                                     data-total="<?php echo htmlspecialchars($buku['total_copy']); ?>"
                                     data-tersedia="<?php echo htmlspecialchars($buku['salinan_tersedia']); ?>"
                                     data-gambar="<?php echo htmlspecialchars($buku['gambar'] ?? ''); ?>">
@@ -212,6 +207,17 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 </div>
                 
                 <div class="form-group">
+                    <label>Kelas:</label>
+                    <select name="kelas">
+                        <option value="" selected disabled>-- Pilih Kelas --</option>
+                        <option value="X">X</option>
+                        <option value="XI">XI</option>
+                        <option value="XII">XII</option>
+                        <option value="UMUM">UMUM</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <label>Total Copy:</label>
                     <input type="number" name="total_copy" min="1" required>
                 </div>
@@ -268,6 +274,17 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 </div>
                 
                 <div class="form-group">
+                    <label>Kelas:</label>
+                    <select name="kelas" id="edit_kelas">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="X">X</option>
+                        <option value="XI">XI</option>
+                        <option value="XII">XII</option>
+                        <option value="UMUM">UMUM</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <label>Total Copy:</label>
                     <input type="number" id="edit_total_copy" name="total_copy" min="1" required>
                 </div>
@@ -312,7 +329,6 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         }
 
         function openEditBukuForm(buttonElement) {
-            // Ambil data dari atribut data-*
             document.getElementById('edit_id').value = buttonElement.getAttribute('data-id');
             document.getElementById('edit_kode_buku').value = buttonElement.getAttribute('data-kode');
             document.getElementById('edit_judul_buku').value = buttonElement.getAttribute('data-judul');
@@ -320,6 +336,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
             document.getElementById('edit_isbn').value = buttonElement.getAttribute('data-isbn');
             document.getElementById('edit_penerbit').value = buttonElement.getAttribute('data-penerbit');
             document.getElementById('edit_tahun_terbit').value = buttonElement.getAttribute('data-tahun');
+            document.getElementById('edit_kelas').value = buttonElement.getAttribute('data-kelas');
             document.getElementById('edit_total_copy').value = buttonElement.getAttribute('data-total');
             document.getElementById('edit_salinan_tersedia').value = buttonElement.getAttribute('data-tersedia');
             document.getElementById('edit_gambar_lama').value = buttonElement.getAttribute('data-gambar');
