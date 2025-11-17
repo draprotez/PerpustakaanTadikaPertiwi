@@ -2,7 +2,7 @@
 // bukuController.php
 session_start();
 include '../config/database.php';
-include '../models/bukuModels.php'; 
+include '../models/bukuModels.php';
 
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) { 
     die("ERROR: Anda harus login untuk mengakses ini!"); 
@@ -38,7 +38,6 @@ $action = $_POST['action'] ?? $_GET['action'] ?? '';
 switch ($action) {
     case 'create':
         if (isset($_POST['judul_buku'])) {
-            
             $uploadResult = handleImageUpload($_FILES['gambar'] ?? null);
             if (isset($uploadResult->error)) {
                 header("Location: ../views/bukuViews.php?error=" . urlencode($uploadResult->error));
@@ -53,6 +52,7 @@ switch ($action) {
                 'penerbit' => $_POST['penerbit'],
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'kelas' => $_POST['kelas'],
+                'kurikulum' => $_POST['kurikulum'],
                 'total_copy' => $_POST['total_copy'],
                 'gambar' => $uploadResult->filename
             ];
@@ -69,7 +69,6 @@ switch ($action) {
 
     case 'update':
         if (isset($_POST['id'])) {
-
             $gambar_lama = $_POST['gambar_lama'] ?? null;
             $uploadResult = handleImageUpload($_FILES['gambar'] ?? null, $gambar_lama);
             if (isset($uploadResult->error)) {
@@ -86,6 +85,7 @@ switch ($action) {
                 'penerbit' => $_POST['penerbit'],
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'kelas' => $_POST['kelas'],
+                'kurikulum' => $_POST['kurikulum'],
                 'total_copy' => $_POST['total_copy'],
                 'salinan_tersedia' => $_POST['salinan_tersedia'],
                 'gambar' => $uploadResult->filename
