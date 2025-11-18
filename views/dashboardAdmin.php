@@ -125,6 +125,7 @@ $conn->close();
             <a href="bukuViews.php">Manajemen Buku</a>
             <a href="peminjamanViews.php">Peminjaman</a>
             <a href="memberViews.php">Anggota</a>
+            <a href="carouselViews.php"><strong>Kelola Carousel</strong></a>
             <a href="laporanViews.php">Laporan</a>
             <a href="adminProfilViews.php">Pengaturan</a>
             <a href="../logout.php">Logout</a>
@@ -135,7 +136,7 @@ $conn->close();
             <label for="search"><b>Cari Peminjaman Aktif (Judul, Nama, NISN):</b></label><br>
             <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" style="padding: 9px; min-width: 300px;">
             <button type="submit" style="background-color: #008CBA; color: white;">Cari</button>
-            <a href="index.php"><button type="button" style="background-color: #f0f0f0; color: #333;">Reset</button></a>
+            <a href="dashboardAdmin.php"><button type="button" style="background-color: #f0f0f0; color: #333;">Reset</button></a>
         </form>
         <h2>Peminjaman Aktif (Hasil Pencarian / 10 Terbaru)</h2>
         <table class="loan-table">
