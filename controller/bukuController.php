@@ -1,8 +1,8 @@
 <?php
-// bukuController.php
+// controller/bukuController.php
 session_start();
 include '../config/database.php';
-include '../models/bukuModels.php';
+include '../models/bukuModels.php'; 
 
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) { 
     die("ERROR: Anda harus login untuk mengakses ini!"); 
@@ -101,25 +101,40 @@ switch ($action) {
         }
         break;
 
+    // ▼▼▼ PERBAIKAN UTAMA: MENANGKAP ERROR DATABASE (Foreign Key) ▼▼▼
     case 'delete':
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
 
+            // 1. Ambil data buku untuk hapus gambar nanti
             $bukuData = getBukuById($conn, $id);
             $gambar_lama = $bukuData['gambar'] ?? null;
 
-            $result = deleteBuku($conn, $id);
-            
-            if ($result) {
-                if ($gambar_lama && file_exists('../assets/images/buku/' . $gambar_lama)) {
-                    unlink('../assets/images/buku/' . $gambar_lama);
+            try {
+                // 2. Coba hapus dari database
+                // Jika buku sedang dipinjam, fungsi ini akan melempar error (Exception)
+                $result = deleteBuku($conn, $id);
+                
+                if ($result) {
+                    // 3. Jika sukses dihapus di DB, baru hapus gambarnya
+                    if ($gambar_lama && file_exists('../assets/images/buku/' . $gambar_lama)) {
+                        unlink('../assets/images/buku/' . $gambar_lama);
+                    }
+                    header("Location: ../views/bukuViews.php?success=Data buku berhasil dihapus!");
                 }
-                header("Location: ../views/bukuViews.php?success=Data buku berhasil dihapus!");
-            } else {
-                header("Location: ../views/bukuViews.php?error=Gagal menghapus data! (Mungkin buku sedang dipinjam)");
+            } catch (mysqli_sql_exception $e) {
+                // 4. Tangkap Error Constraint (Kode 1451)
+                if ($e->getCode() == 1451) {
+                    header("Location: ../views/bukuViews.php?error=Gagal Hapus: Buku ini sedang dipinjam atau ada di riwayat peminjaman. Hapus data peminjamannya dulu!");
+                } else {
+                    header("Location: ../views/bukuViews.php?error=Database Error: " . $e->getMessage());
+                }
+            } catch (Exception $e) {
+                header("Location: ../views/bukuViews.php?error=Terjadi kesalahan sistem.");
             }
         }
         break;
+    // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
     default:
         header("Location: ../views/bukuViews.php");

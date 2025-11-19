@@ -1,5 +1,5 @@
 <?php
-// models/userModels.php
+//userModels.php
 
 function getUserById($conn, $id) {
     $sql = "SELECT id, username, name, role FROM user WHERE id = ?";

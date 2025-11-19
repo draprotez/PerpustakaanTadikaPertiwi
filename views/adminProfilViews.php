@@ -1,5 +1,5 @@
 <?php
-// views/adminProfilViews.php
+//adminProfilViews.php
 session_start();
 if (!isset($_SESSION['user_id'])) { 
     header("Location: ../login.php"); 
@@ -80,7 +80,7 @@ if (!$user_data) {
             
             <div class="button-group">
                 <button type="submit">Update Profil</button> 
-                <button type="button" onclick="window.location.href='../index.php'">Kembali</button>
+                <button type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
             </div>
         </form>
     </div>

@@ -1,5 +1,5 @@
 <?php
-// controller/peminjamanController.php
+//peminjamanController.php
 
 session_start();
 include '../config/database.php';

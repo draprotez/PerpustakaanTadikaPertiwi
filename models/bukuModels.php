@@ -1,5 +1,6 @@
 <?php
-// models/bukuModels.php
+//bukuModels.php
+
 function getAllBuku($conn, $search = null, $limit, $offset) {
     $sql = "SELECT id, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kode_buku, kelas, kurikulum FROM buku";
     $searchTerm = "%" . $search . "%";
@@ -58,15 +59,15 @@ function insertBuku($conn, $data) {
 
     $salinan_tersedia = $data['total_copy']; 
 
-    $stmt->bind_param("ssssssissss", 
+    $stmt->bind_param("ssssssiisss", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
         $data['isbn'],
         $data['penerbit'],
         $data['tahun_terbit'],
-        $data['total_copy'],
-        $salinan_tersedia,
+        $data['total_copy'],      
+        $salinan_tersedia,       
         $data['gambar'],
         $data['kelas'],
         $data['kurikulum']
@@ -91,19 +92,19 @@ function updateBuku($conn, $data) {
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
     
-    $stmt->bind_param("ssssssissssi", 
+    $stmt->bind_param("ssssssiisssi", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
         $data['isbn'],
         $data['penerbit'],
         $data['tahun_terbit'],
-        $data['total_copy'],
+        $data['total_copy'],      
         $data['salinan_tersedia'],
         $data['gambar'],
         $data['kelas'],
         $data['kurikulum'],
-        $data['id']
+        $data['id']              
     );
     
     return $stmt->execute();

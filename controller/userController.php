@@ -1,5 +1,5 @@
 <?php
-// controller/userController.php
+//userController.php
 
 session_start();
 include '../config/database.php';

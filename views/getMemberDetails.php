@@ -1,5 +1,5 @@
 <?php
-// views/getMemberDetails.php
+//getMemberDetails.php
 session_start();
 header('Content-Type: application/json');
 

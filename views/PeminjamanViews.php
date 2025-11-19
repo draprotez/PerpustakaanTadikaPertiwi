@@ -1,5 +1,5 @@
 <?php
-// views/peminjamanViews.php
+//peminjamanViews.php
 session_start();
 if (!isset($_SESSION['user_id'])) { 
     header("Location: ../login.php"); 
@@ -139,7 +139,7 @@ $buku_list_available = getAllAvailableBuku($conn);
         <?php endif; ?>
     </div>
     <br>
-    
+    <button class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
     <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
     
     <div id="createForm" class="modal">

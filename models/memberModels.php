@@ -1,5 +1,5 @@
 <?php
-// models/memberModels.php
+//memberModels.php
 
 function countAllMembers($conn, $search = null) {
     $sql = "SELECT COUNT(*) as total FROM members";
@@ -20,7 +20,7 @@ function countAllMembers($conn, $search = null) {
 }
 
 function getAllMembers($conn, $search = null, $limit, $offset) {
-    $sql = "SELECT id, kode_member, name, username, type, kelas, keterangan, status 
+    $sql = "SELECT id, kode_member, name, username, type, kelas, keterangan, status, nisn, nis, nuptk, nip 
             FROM members";
     
     $searchTerm = "%" . $search . "%";
@@ -60,7 +60,7 @@ function insertMember($conn, $data) {
     
     $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
     
-    $prefix = ($data['type'] == 'siswa') ? 'S-' : 'G-';
+    $prefix = 'TP-';
     $kode_member = $prefix . strtoupper(uniqid());
 
     $keterangan = ($data['type'] == 'guru') ? $data['keterangan'] : null;

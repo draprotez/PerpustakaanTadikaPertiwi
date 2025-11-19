@@ -13,6 +13,7 @@ $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 switch ($action) {
     case 'create':
+        // ... (Bagian create tidak berubah) ...
         if (isset($_POST['name'], $_POST['username'], $_POST['password'])) {
             $data = [
                 'name' => $_POST['name'],
@@ -43,6 +44,7 @@ switch ($action) {
         break;
 
     case 'update':
+        // ... (Bagian update tidak berubah) ...
         if (isset($_POST['id'])) {
             $data = [
                 'id' => $_POST['id'],
@@ -73,22 +75,33 @@ switch ($action) {
         }
         break;
 
+    // ▼▼▼ PERBAIKAN UTAMA ADA DI SINI (BAGIAN DELETE) ▼▼▼
     case 'delete':
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $result = deleteMember($conn, $id);
             
-            if ($result) {
-                header("Location: ../views/memberViews.php?success=Data anggota berhasil dihapus!");
-            } else {
-                if ($conn->errno == 1451) {
-                    header("Location: ../views/memberViews.php?error=Gagal hapus! Anggota ini memiliki riwayat peminjaman.");
-                } else {
-                    header("Location: ../views/memberViews.php?error=Gagal menghapus data!");
+            try {
+                // Mencoba menghapus member
+                $result = deleteMember($conn, $id);
+                
+                if ($result) {
+                    header("Location: ../views/memberViews.php?success=Data anggota berhasil dihapus!");
                 }
+            } catch (mysqli_sql_exception $e) {
+                // Menangkap error Foreign Key Constraint (Error 1451)
+                if ($e->getCode() == 1451) {
+                    header("Location: ../views/memberViews.php?error=Gagal Hapus: Anggota ini masih memiliki riwayat peminjaman buku. Hapus data peminjamannya terlebih dahulu.");
+                } else {
+                    // Error database lainnya
+                    header("Location: ../views/memberViews.php?error=Terjadi kesalahan database: " . $e->getMessage());
+                }
+            } catch (Exception $e) {
+                // Error umum
+                header("Location: ../views/memberViews.php?error=Terjadi kesalahan sistem.");
             }
         }
         break;
+    // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
     default:
         header("Location: ../views/memberViews.php");

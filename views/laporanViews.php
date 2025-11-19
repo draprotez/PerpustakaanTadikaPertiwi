@@ -11,9 +11,11 @@ include '../models/laporanModels.php';
 
 $search = $_GET['search'] ?? ''; 
 $timeframe = $_GET['timeframe'] ?? 'all';
+$status = $_GET['status'] ?? 'all'; // <-- Variabel Baru untuk Status
 
 $limit = 10; 
-$totalResults = countLaporan($conn, $search, $timeframe);
+// Kirim $status ke fungsi model
+$totalResults = countLaporan($conn, $search, $timeframe, $status);
 $totalPages = ceil($totalResults / $limit);
 
 $page = (int)($_GET['page'] ?? 1);
@@ -24,17 +26,19 @@ if ($page < 1) {
 }
 
 $offset = ($page - 1) * $limit;
-$laporan_list = getLaporan($conn, $search, $timeframe, $limit, $offset);
+// Kirim $status ke fungsi model
+$laporan_list = getLaporan($conn, $search, $timeframe, $status, $limit, $offset);
 
 $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : '';
+$statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Peminjaman</title>
+    <title>Laporan Perpustakaan</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -55,26 +59,39 @@ $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : ''
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
+        
+        /* Style untuk status */
+        .status-returned { color: green; font-weight: bold; }
+        .status-borrowed { color: orange; font-weight: bold; }
+        .status-overdue { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>Laporan Peminjaman (Buku Kembali)</h1>
+    <h1>Laporan Peminjaman Buku</h1>
 
     <div class="filter-form">
         <form action="laporanViews.php" method="GET">
-            <label for="timeframe">Filter Waktu:</label>
+            
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="all" <?php if ($status == 'all') echo 'selected'; ?>>Semua Status</option>
+                <option value="borrowed" <?php if ($status == 'borrowed') echo 'selected'; ?>>Sedang Dipinjam (Belum Kembali)</option>
+                <option value="returned" <?php if ($status == 'returned') echo 'selected'; ?>>Sudah Dikembalikan (Riwayat)</option>
+            </select>
+
+            <label for="timeframe">Waktu:</label>
             <select id="timeframe" name="timeframe">
                 <option value="all" <?php if ($timeframe == 'all') echo 'selected'; ?>>Semua Waktu</option>
                 <option value="harian" <?php if ($timeframe == 'harian') echo 'selected'; ?>>Harian (Hari Ini)</option>
-                <option value="mingguan" <?php if ($timeframe == 'mingguan') echo 'selected'; ?>>Mingguan (7 Hari Terakhir)</option>
-                <option value="bulanan" <?php if ($timeframe == 'bulanan') echo 'selected'; ?>>Bulanan (1 Bulan Terakhir)</option>
+                <option value="mingguan" <?php if ($timeframe == 'mingguan') echo 'selected'; ?>>Mingguan (7 Hari)</option>
+                <option value="bulanan" <?php if ($timeframe == 'bulanan') echo 'selected'; ?>>Bulanan (1 Bulan)</option>
             </select>
             
-            <label for="search">Cari (NISN, Nama, Judul):</label>
-            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari...">
+            <label for="search">Cari:</label>
+            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="NISN, Nama, atau Judul...">
             
-            <button type="submit">Filter/Cari</button>
+            <button type="submit">Filter</button>
             <a href="laporanViews.php"><button type="button">Reset</button></a>
         </form>
     </div>
@@ -93,20 +110,17 @@ $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : ''
                 <th>NISN</th>
                 <th>Nama Peminjam</th>
                 <th>Judul Buku</th>
-                <th>Jumlah</th>
-                <th>Tanggal Pinjam</th>
-                <th>Tanggal Kembali</th>
+                <th>Tgl Pinjam</th>
+                <th>Tenggat Waktu</th>
+                <th>Tgl Kembali</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($laporan_list)): ?>
                 <tr>
-                    <td colspan="7" align="center">
-                        <?php if ($search || $timeframe != 'all'): ?>
-                            Data laporan tidak ditemukan dengan filter yang dipilih.
-                        <?php else: ?>
-                            Belum ada data buku yang dikembalikan.
-                        <?php endif; ?>
+                    <td colspan="8" align="center">
+                        Data laporan tidak ditemukan dengan filter yang dipilih.
                     </td>
                 </tr>
             <?php else: ?>
@@ -117,9 +131,31 @@ $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : ''
                         <td><?php echo htmlspecialchars($laporan['nisn'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($laporan['name']); ?></td>
                         <td><?php echo htmlspecialchars($laporan['judul_buku']); ?></td>
-                        <td>1</td>
                         <td><?php echo date("d-m-Y", strtotime($laporan['tanggal_pinjam'])); ?></td>
-                        <td><?php echo date("d-m-Y", strtotime($laporan['tanggal_kembali'])); ?></td>
+                        
+                        <td><?php echo date("d-m-Y", strtotime($laporan['tenggat_waktu'])); ?></td>
+                        
+                        <td>
+                            <?php 
+                            if ($laporan['tanggal_kembali']) {
+                                echo date("d-m-Y", strtotime($laporan['tanggal_kembali']));
+                            } else {
+                                echo '-';
+                            }
+                            ?>
+                        </td>
+                        
+                        <td>
+                            <?php 
+                            if ($laporan['status'] == 'returned') {
+                                echo '<span class="status-returned">Kembali</span>';
+                            } elseif ($laporan['status'] == 'overdue') {
+                                echo '<span class="status-overdue">Telat</span>';
+                            } else {
+                                echo '<span class="status-borrowed">Dipinjam</span>';
+                            }
+                            ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -128,7 +164,7 @@ $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : ''
 
     <div class="pagination">
         <?php if ($totalPages > 1): ?>
-            <a href="?page=<?php echo $page - 1; ?><?php echo $searchParam; ?><?php echo $timeframeParam; ?>"
+            <a href="?page=<?php echo $page - 1; ?><?php echo $searchParam; ?><?php echo $timeframeParam; ?><?php echo $statusParam; ?>"
                class="<?php echo ($page <= 1) ? 'disabled' : ''; ?>">
                 &laquo; Previous
             </a>
@@ -137,13 +173,15 @@ $timeframeParam = $timeframe ? '&timeframe=' . htmlspecialchars($timeframe) : ''
                 Halaman <?php echo $page; ?> dari <?php echo $totalPages; ?>
             </span>
 
-            <a href="?page=<?php echo $page + 1; ?><?php echo $searchParam; ?><?php echo $timeframeParam; ?>"
+            <a href="?page=<?php echo $page + 1; ?><?php echo $searchParam; ?><?php echo $timeframeParam; ?><?php echo $statusParam; ?>"
                class="<?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
                 Next &raquo;
             </a>
         <?php endif; ?>
     </div>
     <br>
+    
+    <a href="dashboardAdmin.php"><button type="button" style="background-color: #6c757d; color: white; border: none;">&laquo; Dashboard</button></a>
     
     <button class="btn-logout" onclick="window.location.href='../controller/logout.php'">Logout</button>
     

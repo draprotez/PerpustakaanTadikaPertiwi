@@ -14,31 +14,20 @@ else if (isset($_SESSION['user_name'])) {
     $nama_user = $_SESSION['user_name'];
 }
 
-// Ambil data buku yang ditampilkan di homepage (berdasarkan setting admin)
+// AMBIL DATA CAROUSEL
+// Hanya ambil data dari tabel 'homepage_books' yang aktif
 $query = "SELECT b.id, b.judul_buku, b.penulis, b.penerbit, b.tahun_terbit, b.gambar, b.kode_buku 
           FROM buku b
           INNER JOIN homepage_books hb ON b.id = hb.buku_id
           WHERE hb.is_active = 1
           ORDER BY hb.urutan ASC";
+
 $result = mysqli_query($conn, $query);
 $books = [];
+
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
         $books[] = $row;
-    }
-}
-
-// Jika tidak ada setting dari admin, tampilkan buku terbaru sebagai default
-if (empty($books)) {
-    $query = "SELECT id, judul_buku, penulis, penerbit, tahun_terbit, gambar, kode_buku 
-              FROM buku 
-              ORDER BY created_at DESC 
-              LIMIT 12";
-    $result = mysqli_query($conn, $query);
-    if ($result) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $books[] = $row;
-        }
     }
 }
 ?>
@@ -49,7 +38,7 @@ if (empty($books)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perpustakaan Tadika Pertiwi</title>
     <style>
-        /* CSS Asli Anda (Tidak Diubah) */
+        /* CSS SAMA SEPERTI SEBELUMNYA */
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
         h1 { color: #333; text-align: center; }
@@ -60,93 +49,36 @@ if (empty($books)) {
         .btn-secondary { background-color: #f0f0f0; color: #333; }
         .btn-danger { background-color: #dc3545; color: white; border: none; }
         
-        /* Carousel CSS (Sedikit diperbaiki agar responsif) */
         .book-section { margin-top: 40px; }
         .section-title { font-size: 1.8em; color: #333; margin-bottom: 20px; text-align: center; }
         
-        .carousel-container { 
-            position: relative; 
-            overflow: hidden; 
-            padding: 20px 0; /* Padding kiri kanan dihapus agar tombol pas di pinggir */
-        }
-        
-        .carousel-wrapper { 
-            display: flex; 
-            transition: transform 0.5s ease; 
-            gap: 20px; 
-            /* Tambahan agar card tidak mengecil */
-            align-items: stretch;
-        }
-        
-        .book-card { 
-            /* Gunakan flex-shrink: 0 agar ukuran card tetap */
-            flex: 0 0 220px; 
-            min-width: 220px; 
-            background: #fff; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            padding: 15px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            /* Biar tinggi semua card sama */
-            display: flex;
-            flex-direction: column;
-        }
-        
+        .carousel-container { position: relative; overflow: hidden; padding: 20px 0; }
+        .carousel-wrapper { display: flex; transition: transform 0.5s ease; gap: 20px; align-items: stretch; }
+        .book-card { flex: 0 0 220px; min-width: 220px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         .book-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        
-        .book-cover { 
-            width: 100%; 
-            height: 280px; 
-            background: #f0f0f0; /* Ganti warna background default */
-            border-radius: 5px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #999; 
-            font-size: 2.5em; 
-            margin-bottom: 10px; 
-            overflow: hidden; 
-        }
+        .book-cover { width: 100%; height: 280px; background: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 2.5em; margin-bottom: 10px; overflow: hidden; }
         .book-cover img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .book-title { 
-            font-weight: bold; 
-            color: #333; 
-            margin-bottom: 5px; 
-            height: 40px; 
-            overflow: hidden; 
-            font-size: 0.95em; 
-            /* Tambahan line-clamp untuk judul panjang */
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        
+        .book-title { font-weight: bold; color: #333; margin-bottom: 5px; height: 40px; overflow: hidden; font-size: 0.95em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .book-author { color: #666; font-size: 0.85em; margin-bottom: 3px; }
-        .book-code { color: #999; font-size: 0.8em; margin-top: auto; /* Dorong ke bawah */ }
-        
-        /* Tombol Navigasi Carousel */
-        .carousel-btn { 
-            position: absolute; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            background: rgba(0,140,186,0.8); 
-            color: white; 
-            border: none; 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            font-size: 18px; 
-            z-index: 10; /* Pastikan tombol di atas konten */
-        }
+        .book-code { color: #999; font-size: 0.8em; margin-top: auto; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,140,186,0.8); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; z-index: 10; }
         .carousel-btn:hover { background: rgba(0,140,186,1); }
         .carousel-btn.prev { left: 10px; }
         .carousel-btn.next { right: 10px; }
-        
         .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.3s; }
         .dot.active { background: #008CBA; width: 25px; border-radius: 5px; }
+
+        /* ▼▼▼ CSS BARU UNTUK PESAN KOSONG ▼▼▼ */
+        .empty-carousel {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #fff;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            color: #777;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -176,38 +108,46 @@ if (empty($books)) {
             <a href="views/lihatBukuViews.php"><button>Lihat Buku</button></a>
         </div>
 
-        <?php if (!empty($books)): ?>
         <div class="book-section">
             <h2 class="section-title">Koleksi Buku Pilihan</h2>
-            <div class="carousel-container">
-                <button class="carousel-btn prev" onclick="moveCarousel(-1)">❮</button>
-                <div class="carousel-wrapper" id="carouselWrapper">
-                    <?php foreach ($books as $book): ?>
-                    
-                    <a href="views/lihatBukuViews.php?id=<?php echo $book['id']; ?>" class="book-card" style="text-decoration: none; color: inherit;">
+
+            <?php if (!empty($books)): ?>
+                <div class="carousel-container">
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">❮</button>
+                    <div class="carousel-wrapper" id="carouselWrapper">
+                        <?php foreach ($books as $book): ?>
                         
-                        <div class="book-cover">
-                            <?php if ($book['gambar'] && file_exists('assets/images/buku/' . $book['gambar'])): ?>
-                                <img src="assets/images/buku/<?php echo htmlspecialchars($book['gambar']); ?>" alt="Cover">
-                            <?php else: ?>
-                                📚
-                            <?php endif; ?>
-                        </div>
-                        <div class="book-title" title="<?php echo htmlspecialchars($book['judul_buku']); ?>">
-                            <?php echo htmlspecialchars($book['judul_buku']); ?>
-                        </div>
-                        <div class="book-author">Penulis: <?php echo htmlspecialchars($book['penulis']); ?></div>
-                        <div class="book-code"><?php echo htmlspecialchars($book['kode_buku']); ?></div>
-                        
-                    </a>
-                    <?php endforeach; ?>
+                        <a href="views/lihatBukuViews.php?id=<?php echo $book['id']; ?>" class="book-card" style="text-decoration: none; color: inherit;">
+                            <div class="book-cover">
+                                <?php if ($book['gambar'] && file_exists('assets/images/buku/' . $book['gambar'])): ?>
+                                    <img src="assets/images/buku/<?php echo htmlspecialchars($book['gambar']); ?>" alt="Cover">
+                                <?php else: ?>
+                                    📚
+                                <?php endif; ?>
+                            </div>
+                            <div class="book-title" title="<?php echo htmlspecialchars($book['judul_buku']); ?>">
+                                <?php echo htmlspecialchars($book['judul_buku']); ?>
+                            </div>
+                            <div class="book-author">Penulis: <?php echo htmlspecialchars($book['penulis']); ?></div>
+                            <div class="book-code"><?php echo htmlspecialchars($book['kode_buku']); ?></div>
+                        </a>
+
+                        <?php endforeach; ?>
+                    </div>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)">❯</button>
                 </div>
-                <button class="carousel-btn next" onclick="moveCarousel(1)">❯</button>
-            </div>
-            <div class="carousel-dots" id="carouselDots"></div>
+                <div class="carousel-dots" id="carouselDots"></div>
+
+            <?php else: ?>
+                <div class="empty-carousel">
+                    <p>Belum ada koleksi buku pilihan yang ditampilkan.</p>
+                    <?php if ($isLoggedIn): // Opsional: Pesan untuk admin ?>
+                        <small>(Silakan tambahkan buku melalui menu Kelola Carousel di Dashboard)</small>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
-    </div>
+        </div>
 
     <div>
         <h1>Perpustakaan SMK Tadika Pertiwi</h1>

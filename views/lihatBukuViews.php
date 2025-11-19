@@ -1,4 +1,5 @@
 <?php
+//lihatBukuViews.php
 session_start();
 require_once '../config/database.php';
 
@@ -149,7 +150,6 @@ if ($result) {
                     Stok Tersedia: <span id="modalStock">0</span>
                 </div>
 
-                <!-- Form untuk memproses peminjaman buku -->
                 <form action="../controller/requestController.php" method="POST">
                     <input type="hidden" name="buku_id" id="modalBookId">
                     

@@ -1,5 +1,5 @@
 <?php
-// views/memberViews.php
+//memberViews.php
 session_start();
 if (!isset($_SESSION['user_id'])) { 
     header("Location: ../login.php"); 
@@ -82,7 +82,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <th>Nama</th>
                 <th>Username (Email)</th>
                 <th>Tipe</th>
-                <th>Kelas/Mapel</th>
+                <th>Nomor Induk</th> <th>Kelas/Mapel</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -90,7 +90,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <tbody>
             <?php if (empty($member_list)): ?>
                 <tr>
-                    <td colspan="8" align="center">
+                    <td colspan="9" align="center">
                         <?php if ($search): ?>
                             Data anggota "<?php echo htmlspecialchars($search); ?>" tidak ditemukan.
                         <?php else: ?>
@@ -105,7 +105,29 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                         <td><?php echo htmlspecialchars($member['kode_member']); ?></td>
                         <td><?php echo htmlspecialchars($member['name']); ?></td>
                         <td><?php echo htmlspecialchars($member['username']); ?></td>
-                        <td><?php echo htmlspecialchars($member['type']); ?></td>
+                        <td>
+                            <span style="padding: 3px 8px; border-radius: 4px; color: white; background-color: <?php echo ($member['type'] == 'siswa') ? '#28a745' : '#007bff'; ?>">
+                                <?php echo ucfirst($member['type']); ?>
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <?php 
+                            if ($member['type'] == 'siswa') {
+                                // Tampilkan NISN / NIS
+                                $nisn = $member['nisn'] ? $member['nisn'] : '-';
+                                $nis = $member['nis'] ? $member['nis'] : '-';
+                                echo "NISN: " . htmlspecialchars($nisn) . "<br>";
+                                echo "NIS: " . htmlspecialchars($nis);
+                            } else {
+                                // Tampilkan NUPTK / NIP
+                                $nuptk = $member['nuptk'] ? $member['nuptk'] : '-';
+                                $nip = $member['nip'] ? $member['nip'] : '-';
+                                echo "NUPTK: " . htmlspecialchars($nuptk) . "<br>";
+                                echo "NIP: " . htmlspecialchars($nip);
+                            }
+                            ?>
+                        </td>
                         <td>
                             <?php 
                             if ($member['type'] == 'siswa') {
@@ -115,7 +137,11 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                             }
                             ?>
                         </td>
-                        <td><?php echo htmlspecialchars($member['status']); ?></td>
+                        <td>
+                            <span style="color: <?php echo ($member['status'] == 'active') ? 'green' : 'red'; ?>; font-weight: bold;">
+                                <?php echo ucfirst($member['status']); ?>
+                            </span>
+                        </td>
                         <td>
                             <button type="button" 
                                     onclick="openEditMemberForm(this)"
@@ -150,7 +176,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <?php endif; ?>
     </div>
     <br>
-    
+    <button  class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
     <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
     
     <div id="createForm" class="modal">

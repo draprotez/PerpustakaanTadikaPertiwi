@@ -9,21 +9,21 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) {
 include '../config/database.php';
 include '../models/bukuModels.php';
 
+// ▼▼▼ LOGIKA PAGINATION ▼▼▼
 $search = $_GET['search'] ?? ''; 
 $limit = 10; 
 $totalResults = countAllBuku($conn, $search); 
 $totalPages = ceil($totalResults / $limit); 
 $page = (int)($_GET['page'] ?? 1); 
-
 if ($page < 1) { 
     $page = 1; 
 } elseif ($page > $totalPages && $totalPages > 0) { 
     $page = $totalPages; 
 }
-
 $offset = ($page - 1) * $limit; 
 $buku_list = getAllBuku($conn, $search, $limit, $offset); 
 $searchParam = $search ? '&search=' . htmlspecialchars($search) : ''; 
+// ▲▲▲ AKHIR LOGIKA PAGINATION ▲▲▲
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -32,25 +32,33 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Data Buku</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
-        .modal-content { background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; width: 400px; max-height: 80vh; overflow-y: auto; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
-        .button-group { margin-top: 20px; text-align: right; }
-        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; }
-        button[type="submit"] { background-color: #4CAF50; color: white; }
-        button[type="button"] { background-color: #f44336; color: white; }
-        .btn-tambah { background-color: #008CBA; color: white; padding: 10px 15px; margin-bottom: 15px; }
-        .btn-logout { background-color: red; color: white; padding: 8px 15px; }
-        .pagination { margin-top: 20px; text-align: center; }
-        .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
-        .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
-        .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
+        body { font-family: Arial, sans-serif; margin: 20px; } 
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; } 
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } 
+        th { background-color: #f2f2f2; } 
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; } 
+        .modal-content { background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; width: 400px; max-height: 80vh; overflow-y: auto; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); } 
+        .form-group { margin-bottom: 15px; } 
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; } 
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; } 
+        
+        /* Style untuk input readonly agar terlihat terkunci */
+        .form-group input[readonly] { 
+            background-color: #e9ecef; 
+            color: #6c757d; 
+            cursor: not-allowed; 
+        }
+
+        .button-group { margin-top: 20px; text-align: right; } 
+        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; } 
+        button[type="submit"] { background-color: #4CAF50; color: white; } 
+        button[type="button"] { background-color: #f44336; color: white; } 
+        .btn-tambah { background-color: #008CBA; color: white; padding: 10px 15px; margin-bottom: 15px; } 
+        .btn-logout { background-color: red; color: white; padding: 8px 15px; } 
+        .pagination { margin-top: 20px; text-align: center; } 
+        .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; } 
+        .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; } 
+        .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; } 
         .cover-image { width: 60px; height: 80px; object-fit: cover; }
         .current-cover-preview { max-width: 100px; display: block; margin-bottom: 10px; }
     </style>
@@ -172,7 +180,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <?php endif; ?>
     </div>
     <br>
-    
+    <button class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
     <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
     
     <div id="createForm" class="modal">
@@ -258,9 +266,16 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                     </select>
                 </div>
                 
-                <div class="form-group"><label>Total Copy:</label><input type="number" id="edit_total_copy" name="total_copy" min="1" required></div>
-                <div class="form-group"><label>Salinan Tersedia:</label><input type="number" id="edit_salinan_tersedia" name="salinan_tersedia" min="0" required></div>
+                <div class="form-group">
+                    <label>Total Stok (Ubah jika ada buku baru):</label>
+                    <input type="number" id="edit_total_copy" name="total_copy" min="1" required oninput="calculateStock()">
+                </div>
                 
+                <div class="form-group">
+                    <label>Salinan Tersedia (Otomatis):</label>
+                    <input type="number" id="edit_salinan_tersedia" name="salinan_tersedia" readonly>
+                    <small style="color: red; font-size: 0.8em;">*Kolom ini terkunci. Jika Anda menambah Total Stok, kolom ini akan ikut bertambah otomatis.</small>
+                </div>
                 <div class="form-group">
                     <label>Cover Buku:</label>
                     <div id="current-cover-container"></div>
@@ -288,6 +303,10 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
     </div>
 
     <script>
+        // Variabel Global untuk menyimpan stok awal sebelum diedit
+        let originalTotal = 0;
+        let originalTersedia = 0;
+
         function openForm(modalId) {
             document.getElementById(modalId).style.display = 'block'; 
         }
@@ -306,8 +325,14 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
             document.getElementById('edit_tahun_terbit').value = buttonElement.getAttribute('data-tahun');
             document.getElementById('edit_kelas').value = buttonElement.getAttribute('data-kelas');
             document.getElementById('edit_kurikulum').value = buttonElement.getAttribute('data-kurikulum');
-            document.getElementById('edit_total_copy').value = buttonElement.getAttribute('data-total');
-            document.getElementById('edit_salinan_tersedia').value = buttonElement.getAttribute('data-tersedia');
+            
+            // Simpan data stok asli ke variabel global
+            originalTotal = parseInt(buttonElement.getAttribute('data-total'));
+            originalTersedia = parseInt(buttonElement.getAttribute('data-tersedia'));
+
+            document.getElementById('edit_total_copy').value = originalTotal;
+            document.getElementById('edit_salinan_tersedia').value = originalTersedia;
+            
             document.getElementById('edit_gambar_lama').value = buttonElement.getAttribute('data-gambar');
 
             const coverContainer = document.getElementById('current-cover-container');
@@ -320,6 +345,26 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 
             openForm('editForm');
         }
+
+        // ▼▼▼ FUNGSI BARU: HITUNG STOK OTOMATIS ▼▼▼
+        function calculateStock() {
+            const newTotal = parseInt(document.getElementById('edit_total_copy').value) || 0;
+            const diff = newTotal - originalTotal; // Selisih penambahan/pengurangan stok
+            
+            // Salinan tersedia baru = Salinan lama + selisih
+            // Contoh: Total lama 10, Tersedia 8. Ubah Total jadi 12 (selisih +2). Tersedia jadi 10.
+            const newTersedia = originalTersedia + diff;
+
+            // Cegah minus (meskipun validasi di backend juga perlu)
+            if(newTersedia < 0) {
+                alert("Stok total tidak boleh lebih kecil dari jumlah yang sedang dipinjam!");
+                document.getElementById('edit_total_copy').value = originalTotal; // Reset
+                document.getElementById('edit_salinan_tersedia').value = originalTersedia;
+            } else {
+                document.getElementById('edit_salinan_tersedia').value = newTersedia;
+            }
+        }
+        // ▲▲▲ AKHIR FUNGSI BARU ▲▲▲
 
         function openDeleteConfirm(buttonElement) {
             const deleteUrl = buttonElement.getAttribute('data-url');

@@ -1,5 +1,5 @@
 <?php
-// models/peminjamanModels.php
+//peminjamanModels.php
 function countAllPeminjamanAktif($conn, $search = null) {
     $sql = "SELECT COUNT(*) as total 
             FROM peminjaman p

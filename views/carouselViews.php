@@ -1,5 +1,5 @@
 <?php
-// views/carouselViews.php
+//carouselViews.php
 session_start();
 include '../config/database.php';
 include '../models/carouselModels.php'; // Pastikan ini memuat file yang benar
@@ -12,12 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 $nama_user = $_SESSION['user_name'];
 $role_user = $_SESSION['user_role'];
 
-// --- PERBAIKAN DI SINI ---
-// Mengambil daftar buku yang SUDAH ADA di carousel
 $homepage_books = getCarouselBooks($conn); 
 
-// Mengambil daftar buku untuk dropdown (yang BELUM ada di carousel)
-// Nama fungsi disesuaikan dengan yang ada di models/carouselModels.php
 $all_books = getAllBooksOption($conn);     
 
 $success = $_GET['success'] ?? '';
@@ -30,7 +26,6 @@ $error = $_GET['error'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Carousel Homepage</title>
     <style>
-        /* CSS tetap sama */
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
         h1 { color: #333; margin-bottom: 10px; }

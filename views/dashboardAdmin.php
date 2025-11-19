@@ -1,4 +1,5 @@
 <?php
+//dashboardAdmin.php
 session_start();
 include '../config/database.php';
 
@@ -194,7 +195,7 @@ $conn->close();
             <h2>Akses Ditolak</h2>
             <p>Halaman ini hanya dapat diakses oleh petugas perpustakaan.</p>
             <p>Silakan <a href="../login.php">login sebagai petugas</a> untuk mengakses dashboard.</p>
-            <a href="../index.php"><button type="button">Kembali ke Halaman Utama</button></a>
+            <a href="dashboardAdmin.php"><button type="button">Kembali ke Halaman Utama</button></a>
         </div>
     <?php endif; ?>
 </body>
