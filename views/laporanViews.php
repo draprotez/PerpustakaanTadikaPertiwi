@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../config/database.php';
 include '../models/laporanModels.php';
+include '../header.php';
 
 $search = $_GET['search'] ?? ''; 
 $timeframe = $_GET['timeframe'] ?? 'all';
@@ -66,7 +67,9 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
         .status-overdue { color: red; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
+
+    <?php include 'partials/sidebar.php'; ?>
 
     <h1>Laporan Peminjaman Buku</h1>
 

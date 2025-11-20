@@ -3,6 +3,7 @@
 session_start();
 include '../config/database.php';
 include '../models/carouselModels.php'; // Pastikan ini memuat file yang benar
+include '../header.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -58,7 +59,9 @@ $error = $_GET['error'] ?? '';
         .empty-state { text-align: center; padding: 40px; color: #999; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
+
+    <?php include 'partials/sidebar.php'; ?>
     <div class="container">
         <h1>Kelola Carousel Homepage</h1>
         <div class="breadcrumb">

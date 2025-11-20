@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['member_id'])) {
 
 include '../config/database.php';
 include '../models/bukuModels.php';
+include '../header.php';
 
 // ▼▼▼ LOGIKA PAGINATION ▼▼▼
 $search = $_GET['search'] ?? ''; 
@@ -49,11 +50,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
             cursor: not-allowed; 
         }
 
-        .button-group { margin-top: 20px; text-align: right; } 
-        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; } 
-        button[type="submit"] { background-color: #4CAF50; color: white; } 
-        button[type="button"] { background-color: #f44336; color: white; } 
-        .btn-tambah { background-color: #008CBA; color: white; padding: 10px 15px; margin-bottom: 15px; } 
+       
         .btn-logout { background-color: red; color: white; padding: 8px 15px; } 
         .pagination { margin-top: 20px; text-align: center; } 
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; } 
@@ -63,19 +60,36 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .current-cover-preview { max-width: 100px; display: block; margin-bottom: 10px; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
 
-    <h1>Kelola Data Buku</h1>
+    <?php include 'partials/sidebar.php'; ?>
 
-    <button class="btn-tambah" onclick="openForm('createForm')">Tambah Buku Baru</button>
+    <p class="font-semibold text-xl py-5">Kelola Data Buku</p>
 
-    <hr>
+   
     <form action="bukuViews.php" method="GET">
-        <label for="search">Cari (Judul, Kode, Penulis, Penerbit):</label>
-        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>">
-        <button type="submit">Cari</button>
-        <a href="bukuViews.php">Hapus Filter</a>
+        
+        <label for="search"  >Cari (Judul, Kode, Penulis, Penerbit):</label><br>
+        <div class="relative inline-block py-3" style="vertical-align: middle;">
+            <input type="text" class="rounded-full pr-10" style="padding:5px; padding-right:34px; border:1px solid #ccc;" id="search" name="search" placeholder="Cari buku" value="<?php echo htmlspecialchars($search); ?>">
+            <img src="../assets/images/icon/mingcute_search-line (1).png" alt="" aria-hidden="true" class="absolute right-2 top-1/2" style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;" />
+        </div>
+        <div class="inline-flex items-center gap-3" style="vertical-align: middle;">
+            <a href="bukuViews.php" class="px-3 bg-red-500 py-2 rounded-3xl text-white font-semibold">Hapus Filter</a>
+       <button type="button" 
+    class="btn-tambah inline-flex items-center py-3 px-3 rounded-full  bg-[#05AC48] text-white" 
+    onclick="openForm('createForm')">
+
+    <p class="leading-none pt-1 py-0.3 font-semibold">Tambah Buku Baru </p><img src="../assets/images/icon/mdi_add-bold.png" 
+         alt="Tambah" 
+         class="w-4 h-4 ml-2" />
+
+</button>
+
+
+        </div>
     </form>
+
     <hr>
     
     <?php if (isset($_GET['success'])): ?>
@@ -87,19 +101,19 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 
     <table>
         <thead>
-            <tr>
-                <th>No</th>
-                <th>Cover</th>
-                <th>Kode Buku</th>
-                <th>Judul Buku</th>
-                <th>Penulis</th>
-                <th>Penerbit</th>
-                <th>Tahun</th>
-                <th>Kelas</th>
-                <th>Kurikulum</th>
-                <th>Total</th>
-                <th>Tersedia</th>
-                <th>Aksi</th>
+            <tr >
+                <th class="bg-[#73A7DB]">No</th>
+                <th class="bg-[#73A7DB]">Cover</th>
+                <th class="bg-[#73A7DB]">Kode Buku</th>
+                <th class="bg-[#73A7DB]">Judul Buku</th>
+                <th class="bg-[#73A7DB]">Penulis</th>
+                <th class="bg-[#73A7DB]">Penerbit</th>
+                <th class="bg-[#73A7DB]">Tahun</th>
+                <th class="bg-[#73A7DB]">Kelas</th>
+                <th class="bg-[#73A7DB]">Kurikulum</th>
+                <th class="bg-[#73A7DB]">Total</th>
+                <th class="bg-[#73A7DB]">Tersedia</th>
+                <th class="bg-[#73A7DB]">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -137,6 +151,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                         <td><?php echo htmlspecialchars($buku['salinan_tersedia']); ?></td>
                         <td>
                             <button type="button" 
+                            class="bg-yellow-500 rounded-full py-1 px-2 font-semibold text-black"
                                     onclick="openEditBukuForm(this)"
                                     data-id="<?php echo $buku['id']; ?>"
                                     data-kode="<?php echo htmlspecialchars($buku['kode_buku']); ?>"
@@ -153,6 +168,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                                 Edit
                             </button>
                             <button type="button" 
+                            class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1"
                                     onclick="openDeleteConfirm(this)"
                                     data-url="../controller/bukuController.php?action=delete&id=<?php echo $buku['id']; ?>">
                                 Delete
@@ -180,9 +196,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <?php endif; ?>
     </div>
     <br>
-    <button class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
-    <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
-    
+   
     <div id="createForm" class="modal">
         <div class="modal-content">
             <h2>Form Tambah Buku Baru</h2>
@@ -222,8 +236,8 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <div class="form-group"><label>Cover Buku:</label><input type="file" name="gambar" accept="image/*"></div>
                 
                 <div class="button-group">
-                    <button type="submit">Simpan</button> 
-                    <button type="button" onclick="closeForm('createForm')">Batal</button>
+                    <button type="submit" class="bg-green-500  rounded-full py-1 px-2 font-semibold text-white">Simpan</button> 
+                    <button type="button" class="bg-red-500 rounded-full py-1 px-2 font-semibold text-white"  onclick="closeForm('createForm')">Batal</button>
                 </div>
             </form>
         </div>

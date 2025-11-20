@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../config/database.php';
 include '../models/memberModels.php';
+include '../header.php';
 
 $search = $_GET['search'] ?? ''; 
 $limit = 10; 
@@ -52,9 +53,11 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .siswa-fields, .guru-fields { display: none; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
 
-    <h1>Kelola Data Anggota (Siswa & Guru)</h1>
+    <?php include 'partials/sidebar.php'; ?>
+
+    <p class="font-semibold text-xl py-5">Kelola Data Anggota (Siswa & Guru)</p>
 
     <button class="btn-tambah" onclick="openForm('createForm')">Tambah Anggota Baru</button>
 
@@ -176,8 +179,6 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         <?php endif; ?>
     </div>
     <br>
-    <button  class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
-    <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
     
     <div id="createForm" class="modal">
         <div class="modal-content">

@@ -2,6 +2,7 @@
 //dashboardAdmin.php
 session_start();
 include '../config/database.php';
+ include '../header.php';
 
 $isLoggedIn = false;
 $isAdmin = false;
@@ -80,70 +81,65 @@ $conn->close();
         .dashboard-container { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0; }
         .dashboard-box { border: 1px solid #ddd; background-color: #f9f9f9; padding: 20px; width: 250px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dashboard-box h3 { margin-top: 0; color: #333; }
-        .dashboard-box .count { font-size: 2.5em; font-weight: bold; color: #008CBA; }
-        .menu-links { margin-top: 30px; }
-        .menu-links a { display: inline-block; padding: 10px 15px; margin: 5px; background-color: #f0f0f0; text-decoration: none; color: #333; border-radius: 4px; border: 1px solid #ddd; }
-        .menu-links a:hover { background-color: #e0e0e0; }
+        .dashboard-box .count { font-size: 2.5em; font-weight: bold;  }
         button { padding: 10px 15px; margin: 5px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0; }
         button:hover { background-color: #e0e0e0; }
         .loan-table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
         .loan-table th, .loan-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .loan-table th { background-color: #f2f2f2; }
+    .loan-table th { background-color: #73A7DB; color: #333; }
         .status-overdue { color: #D32F2F; font-weight: bold; }
         .status-borrowed { color: #388E3C; }
         .dashboard-box.overdue .count { color: #D32F2F; }
         .access-denied { text-align: center; margin: 50px; padding: 20px; background-color: #ffebee; border: 1px solid #f44336; border-radius: 5px; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
 
     <?php if ($isLoggedIn && $isAdmin) : ?>
-        <h1>Dashboard Petugas (<?php echo htmlspecialchars($role_user); ?>)</h1>
-        <p>Selamat datang, <?php echo htmlspecialchars($nama_user); ?>!</p>
-        
-        <div class="dashboard-container">
-            <div class="dashboard-box">
-                <h3>Total Judul Buku</h3>
-                <p class="count"><?php echo $total_buku; ?></p>
+
+        <main class="p-6">
+        <p class="text-xl font-semibold">Dashboard Petugas (<?php echo htmlspecialchars($role_user); ?>)</p>
+    <p class="text-xl font-semibold">Selamat datang, <?php echo htmlspecialchars($nama_user); ?>!</p>
+        <div class="dashboard-container ">
+            <div class="dashboard-box bg-[#3FB3AD] text-white">
+                <div class="card-box flex gap-3px"><img src="../assets/images/icon/Vector.png" class="mr-4 w-5 h-5" alt=""><p class=" font-semibold text-white">Total Judul Buku</p></div>
+                <p class="count text-white"><?php echo $total_buku; ?></p>
                 <a href="bukuViews.php">Kelola Buku &raquo;</a>
             </div>
             
-            <div class="dashboard-box">
-                <h3>Total Anggota</h3>
-                <p class="count"><?php echo $total_member; ?></p>
+            <div class="dashboard-box bg-[#F6BC3D] text-white">
+               <div class="card-box flex"> <img src="../assets/images/icon/majesticons_user.png" class="mr-4 w-6 h-6" alt=""> <p class="font-semibold">Total Anggota</p></div>
+                <p class="count text-white"><?php echo $total_member; ?></p>
                 <a href="memberViews.php">Kelola Anggota &raquo;</a>
             </div>
 
-            <div class="dashboard-box <?php echo ($total_overdue > 0) ? 'overdue' : ''; ?>">
-                <h3>Buku Kadaluarsa</h3>
-                <p class="count"><?php echo $total_overdue; ?></p>
+            <div class="dashboard-box bg-[#DF4B41] text-white <?php echo ($total_overdue > 0) ? 'overdue' : ''; ?>">
+                <div class="card-box flex"><img src="../assets/images/icon/pajamas_calendar-overdue.png" class="mr-4 w-5 h-5"alt=""><p class="font-semibold">Buku Kadaluarsa</p></div>
+                <p class="count text-white"><?php echo $total_overdue; ?></p>
                 <a href="kelolaPeminjamanViews.php">Kelola Peminjaman &raquo;</a>
             </div>
         </div>
-
-        <div class="menu-links">
-            <a href="#">Dashboard</a>
-            <a href="bukuViews.php">Manajemen Buku</a>
-            <a href="peminjamanViews.php">Peminjaman</a>
-            <a href="memberViews.php">Anggota</a>
-            <a href="carouselViews.php"><strong>Kelola Carousel</strong></a>
-            <a href="laporanViews.php">Laporan</a>
-            <a href="adminProfilViews.php">Pengaturan</a>
-            <a href="../logout.php">Logout</a>
-        </div>
+        <?php include 'partials/sidebar.php'; ?>
+   
         <hr style="margin-top: 20px;">
 
-        <form action="" method="GET" style="margin: 20px 0;">
+        <form action="" method="GET" style="margin: 20px 0; width:100%;">
             <label for="search"><b>Cari Peminjaman Aktif (Judul, Nama, NISN):</b></label><br>
-            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" style="padding: 9px; min-width: 300px;">
-            <button type="submit" style="background-color: #008CBA; color: white;">Cari</button>
-            <a href="dashboardAdmin.php"><button type="button" style="background-color: #f0f0f0; color: #333;">Reset</button></a>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+                <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari..." style="flex:1; padding:9px; border:1px solid #ccc; border-radius:100px;" />
+                <button type="submit" class="rounded-full" style="background-color: #008CBA; color: white; padding:9px 12px; border:none; display:flex; align-items:center; gap:8px;">
+                    <!-- inline magnifying glass icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <span style="font-weight:600;">Cari</span>
+                </button>
+                <a href="dashboardAdmin.php"><button type="button" class="bg-red-500 text-white font-semibold rounded-full" style="  padding:9px 12px; border:1px solid #ddd;">Reset</button></a>
+            </div>
         </form>
-        <h2>Peminjaman Aktif (Hasil Pencarian / 10 Terbaru)</h2>
+        <h2>Peminjaman Aktif </h2>
         <table class="loan-table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th class="bg-[#73A7DB]">No</th>
                     <th>Judul Buku</th>
                     <th>Jumlah</th>
                     <th>NISN</th>
@@ -174,9 +170,9 @@ $conn->close();
                             <td>
                                 <?php
                                 if ($loan['status'] == 'overdue') {
-                                    echo '<span class="status-overdue">Kadaluarsa</span>';
+                                    echo '<span class="status-overdue border px-2 py-1.5 rounded-xl border-black bg-red-500 font-semibold text-black">Kadaluarsa</span>';
                                 } elseif ($loan['status'] == 'borrowed') {
-                                    echo '<span class="status-borrowed">Dipinjam</span>';
+                                    echo '<span class="status-borrowed border px-2 py-1.5 rounded-xl border-black bg-yellow-200 font-semibold text-black">Dipinjam</span>';
                                 } else {
                                     echo htmlspecialchars($loan['status']);
                                 }
@@ -188,14 +184,15 @@ $conn->close();
             </tbody>
         </table>
         <hr>
-        <a href="../logout.php"><button type="button">Keluar</button></a>
+
+        </main>
     
     <?php else : ?>
         <div class="access-denied">
             <h2>Akses Ditolak</h2>
             <p>Halaman ini hanya dapat diakses oleh petugas perpustakaan.</p>
             <p>Silakan <a href="../login.php">login sebagai petugas</a> untuk mengakses dashboard.</p>
-            <a href="dashboardAdmin.php"><button type="button">Kembali ke Halaman Utama</button></a>
+            <a  href="dashboardAdmin.php" ><button type="button">Kembali ke Halaman Utama</button></a>
         </div>
     <?php endif; ?>
 </body>

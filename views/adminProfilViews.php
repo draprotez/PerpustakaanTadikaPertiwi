@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../config/database.php';
 include '../models/userModels.php';
+include '../header.php';
 
 $user_id = $_SESSION['user_id'];
 $user_data = getUserById($conn, $user_id);
@@ -46,7 +47,9 @@ if (!$user_data) {
         .alert-error { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
+
+    <?php include 'partials/sidebar.php'; ?>
 
     <div class="form-container">
         <h2>Edit Profil Saya</h2>

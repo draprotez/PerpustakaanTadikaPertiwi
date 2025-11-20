@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../config/database.php';
 include '../models/peminjamanModels.php';
+include '../header.php';
 
 $search = $_GET['search'] ?? ''; 
 $limit = 10; 
@@ -43,30 +44,56 @@ $buku_list_available = getAllAvailableBuku($conn);
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
         .button-group { margin-top: 20px; text-align: right; }
-        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; }
-        button[type="submit"] { background-color: #4CAF50; color: white; }
-        button.btn-return { background-color: #2196F3; color: white; }
-        button[type="button"] { background-color: #f44336; color: white; }
-        .btn-tambah { background-color: #008CBA; color: white; padding: 10px 15px; margin-bottom: 15px; }
-        .btn-logout { background-color: red; color: white; padding: 8px 15px; }
+       
+        
         .pagination { margin-top: 20px; text-align: center; }
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
     </style>
 </head>
-<body>
+<body class="ml-[320px]">
 
-    <h1>Kelola Peminjaman Buku</h1>
+    <?php include 'partials/sidebar.php'; ?>
 
-    <button class="btn-tambah" onclick="openForm('createForm')">Buat Peminjaman Baru</button>
+    <p class="font-semibold text-xl py-5">Kelola Peminjaman Buku</p>
 
-    <hr>
+   
+
+   
     <form action="peminjamanViews.php" method="GET">
-        <label for="search">Cari (Nama Peminjam, Judul Buku, Kode Member):</label>
-        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>">
-        <button type="submit">Cari</button>
-        <a href="peminjamanViews.php">Hapus Filter</a>
+        <label for="search">Cari (Nama Peminjam, Judul Buku, Kode Member):</label> <br>
+      <div class="relative inline-block py-3" style="vertical-align: middle;">
+    <input 
+        type="text" 
+        id="search" 
+        name="search" 
+        value="<?php echo htmlspecialchars($search); ?>" 
+        placeholder="Cari peminjaman"
+        class="rounded-full pr-10"
+        style="padding:5px; padding-right:34px; border:1px solid #ccc;"
+    >
+
+    <img 
+        src="../assets/images/icon/mingcute_search-line (1).png" 
+        alt="" 
+        aria-hidden="true" 
+        class="absolute right-2 top-1/2" 
+        style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;"
+    />
+</div>
+
+        <a href="peminjamanViews.php"class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold">Hapus Filter</a>
+        <button type="button"
+    class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
+    onclick="openForm('createForm')">
+
+    <p class="leading-none ">Buat Peminjaman Baru</p>
+
+    <img src="../assets/images/icon/mdi_add-bold.png"
+         alt="Tambah"
+         class="w-4 h-4 ml-2">
+</button>
     </form>
     <hr>
     
@@ -110,11 +137,12 @@ $buku_list_available = getAllAvailableBuku($conn);
                         <td><?php echo date("d-m-Y", strtotime($pinjam['tenggat_waktu'])); ?></td>
                         <td><?php echo htmlspecialchars($pinjam['status']); ?></td>
                         <td>
-                            <button type="button" class="btn-return"
+                            <button type="button" 
                                     onclick="openReturnConfirm(this)"
+                                    class="bg-yellow-500 rounded-full py-2 px-2 font-semibold text-black"
                                     data-url="../controller/peminjamanController.php?action=return&id=<?php echo $pinjam['peminjaman_id']; ?>&buku_id=<?php echo $pinjam['buku_id']; ?>"
                                     data-judul="<?php echo htmlspecialchars($pinjam['judul_buku']); ?>">
-                                Kembalikan
+                                Edit! 
                             </button>
                         </td>
                     </tr>
@@ -139,8 +167,6 @@ $buku_list_available = getAllAvailableBuku($conn);
         <?php endif; ?>
     </div>
     <br>
-    <button class="btn" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
-    <button class="btn-logout" onclick="window.location.href='../logout.php'">Logout</button>
     
     <div id="createForm" class="modal">
         <div class="modal-content">
@@ -178,8 +204,10 @@ $buku_list_available = getAllAvailableBuku($conn);
                 </div>
                 
                 <div class="button-group">
-                    <button type="submit">Pinjamkan</button> 
-                    <button type="button" onclick="closeForm('createForm')">Batal</button>
+                    <button type="submit " class="bg-green-500  rounded-full py-1 px-2 font-semibold text-white">Pinjamkan</button> 
+                    <button type="button" 
+                    class="px-3 bg-red-500 py-2 rounded-3xl text-white font-semibold"
+                    onclick="closeForm('createForm')">Batal</button>
                 </div>
             </form>
         </div>
@@ -189,8 +217,8 @@ $buku_list_available = getAllAvailableBuku($conn);
         <div class="modal-content">
             <p>Yakin ingin mengembalikan buku <b id="returnJudulBuku"></b>?</p>
             <div class="button-group">
-                <button type="button" onclick="confirmReturn()" class="btn-return">Ya, Kembalikan</button>
-                <button type="button" onclick="closeForm('returnConfirmModal')">Batal</button>
+                <button type="button" onclick="confirmReturn()" class="bg-green-500  rounded-full py-1 px-2 font-semibold text-white">Ya, Kembalikan</button>
+                <button type="button" class="px-3 bg-red-500 py-2 rounded-3xl text-white font-semibold" onclick="closeForm('returnConfirmModal')">Batal</button>
             </div>
             <input type="hidden" id="returnUrlInput">
         </div>
