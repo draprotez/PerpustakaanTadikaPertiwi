@@ -63,7 +63,7 @@ $buku_list_available = getAllAvailableBuku($conn);
    
     <form action="peminjamanViews.php" method="GET">
         <label for="search">Cari (Nama Peminjam, Judul Buku, Kode Member):</label> <br>
-      <div class="relative inline-block py-3" style="vertical-align: middle;">
+      <div class="mx-2 relative inline-block py-3" style="vertical-align: middle;">
     <input 
         type="text" 
         id="search" 
@@ -83,7 +83,7 @@ $buku_list_available = getAllAvailableBuku($conn);
     />
 </div>
 
-        <a href="peminjamanViews.php"class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold">Hapus Filter</a>
+        <a href="peminjamanViews.php"class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold mx-2">Hapus Filter</a>
         <button type="button"
     class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
     onclick="openForm('createForm')">
@@ -107,13 +107,13 @@ $buku_list_available = getAllAvailableBuku($conn);
     <table>
         <thead>
             <tr>
-                <th>ID Pinjam</th>
-                <th>Judul Buku (Kode)</th>
-                <th>Peminjam (Kode)</th>
-                <th>Tgl Pinjam</th>
-                <th>Tenggat Waktu</th>
-                <th>Status</th>
-                <th>Aksi</th>
+                <th class="bg-[#73A7DB]">ID Pinjam</th>
+                <th class="bg-[#73A7DB]">Judul Buku (Kode)</th>
+                <th class="bg-[#73A7DB]">Peminjam (Kode)</th>
+                <th class="bg-[#73A7DB]">Tgl Pinjam</th>
+                <th class="bg-[#73A7DB]">Tenggat Waktu</th>
+                <th class="bg-[#73A7DB]">Status</th>
+                <th class="bg-[#73A7DB]">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -139,7 +139,7 @@ $buku_list_available = getAllAvailableBuku($conn);
                         <td>
                             <button type="button" 
                                     onclick="openReturnConfirm(this)"
-                                    class="bg-yellow-500 rounded-full py-2 px-2 font-semibold text-black"
+                                    class="bg-yellow-500 rounded-full py-1 px-2 font-semibold text-black"
                                     data-url="../controller/peminjamanController.php?action=return&id=<?php echo $pinjam['peminjaman_id']; ?>&buku_id=<?php echo $pinjam['buku_id']; ?>"
                                     data-judul="<?php echo htmlspecialchars($pinjam['judul_buku']); ?>">
                                 Edit! 
@@ -216,9 +216,9 @@ $buku_list_available = getAllAvailableBuku($conn);
     <div id="returnConfirmModal" class="modal">
         <div class="modal-content">
             <p>Yakin ingin mengembalikan buku <b id="returnJudulBuku"></b>?</p>
-            <div class="button-group">
+            <div class="button-group my-5">
                 <button type="button" onclick="confirmReturn()" class="bg-green-500  rounded-full py-1 px-2 font-semibold text-white">Ya, Kembalikan</button>
-                <button type="button" class="px-3 bg-red-500 py-2 rounded-3xl text-white font-semibold" onclick="closeForm('returnConfirmModal')">Batal</button>
+                <button type="button" class="px-3 bg-red-500 py-1 rounded-3xl text-white font-semibold" onclick="closeForm('returnConfirmModal')">Batal</button>
             </div>
             <input type="hidden" id="returnUrlInput">
         </div>

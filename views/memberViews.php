@@ -40,12 +40,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
-        .button-group { margin-top: 20px; text-align: right; }
-        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; }
-        button[type="submit"] { background-color: #4CAF50; color: white; }
-        button[type="button"] { background-color: #f44336; color: white; }
-        .btn-tambah { background-color: #008CBA; color: white; padding: 10px 15px; margin-bottom: 15px; }
-        .btn-logout { background-color: red; color: white; padding: 8px 15px; }
+       
         .pagination { margin-top: 20px; text-align: center; }
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
@@ -59,14 +54,46 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 
     <p class="font-semibold text-xl py-5">Kelola Data Anggota (Siswa & Guru)</p>
 
-    <button class="btn-tambah" onclick="openForm('createForm')">Tambah Anggota Baru</button>
 
-    <hr>
+
+
     <form action="memberViews.php" method="GET">
-        <label for="search">Cari (Nama, Kode, Email, NISN, NUPTK):</label>
-        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>">
-        <button type="submit">Cari</button>
-        <a href="memberViews.php">Hapus Filter</a>
+        <label for="search">Cari (Nama, Kode, Email, NISN, NUPTK):</label> <br>
+       <div class="relative inline-block py-3 mx-2" style="vertical-align: middle;">
+    <input 
+        type="text" 
+        id="search" 
+        name="search" 
+        value="<?php echo htmlspecialchars($search); ?>" 
+        placeholder="Cari peminjaman"
+        class="rounded-full pr-10"
+        style="padding:5px; padding-right:34px; border:1px solid #ccc;"
+    >
+
+    <img 
+        src="../assets/images/icon/mingcute_search-line (1).png" 
+        alt="" 
+        aria-hidden="true" 
+        class="absolute right-2 top-1/2" 
+        style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;"
+    />
+</div>
+
+    <a href="memberViews.php"
+   class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold mx-2">
+   Hapus Filter
+</a>
+
+           <button type="button"
+    class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
+    onclick="openForm('createForm')">
+
+    <p class="leading-none pt-1">Tambah Anggota Baru</p>
+
+    <img src="../assets/images/icon/mdi_add-bold.png"
+         alt="Tambah"
+         class="w-4 h-4 ml-2">
+</button>
     </form>
     <hr>
     
@@ -80,14 +107,15 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Kode Member</th>
-                <th>Nama</th>
-                <th>Username (Email)</th>
-                <th>Tipe</th>
-                <th>Nomor Induk</th> <th>Kelas/Mapel</th>
-                <th>Status</th>
-                <th>Aksi</th>
+                <th class="bg-[#73A7DB]">ID</th>
+                <th class="bg-[#73A7DB]">Kode Member</th>
+                <th class="bg-[#73A7DB]">Nama</th>
+                <th class="bg-[#73A7DB]">Username (Email)</th>
+                <th class="bg-[#73A7DB]">Tipe</th>
+                <th class="bg-[#73A7DB]">Nomor Induk</th> 
+                <th class="bg-[#73A7DB]">Kelas/Mapel</th>
+                <th class="bg-[#73A7DB]">Status</th>
+                <th class="bg-[#73A7DB]">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -109,7 +137,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                         <td><?php echo htmlspecialchars($member['name']); ?></td>
                         <td><?php echo htmlspecialchars($member['username']); ?></td>
                         <td>
-                            <span style="padding: 3px 8px; border-radius: 4px; color: white; background-color: <?php echo ($member['type'] == 'siswa') ? '#28a745' : '#007bff'; ?>">
+                            <span style="padding: 3px 8px; border-radius: 100px; color: white; background-color: <?php echo ($member['type'] == 'siswa') ? '#28a745' : '#007bff'; ?>">
                                 <?php echo ucfirst($member['type']); ?>
                             </span>
                         </td>
@@ -147,14 +175,18 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                         </td>
                         <td>
                             <button type="button" 
+                                    class="bg-yellow-500 rounded-full py-1 px-2 font-semibold text-black inline-flex items-center"
                                     onclick="openEditMemberForm(this)"
                                     data-id="<?php echo $member['id']; ?>">
-                                Edit
+                                <img src="../assets/images/icon/line-md_edit.png" alt="Edit" style="width:16px;height:16px;margin-right:6px;" />
+                                <span>Edit</span>
                             </button>
                             <button type="button" 
+                                    class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1 inline-flex items-center"
                                     onclick="openDeleteConfirm(this)"
                                     data-url="../controller/memberController.php?action=delete&id=<?php echo $member['id']; ?>">
-                                Delete
+                                <img src="../assets/images/icon/mi_delete.png" alt="Delete" style="width:16px;height:16px;margin-right:6px;" />
+                                <span>Delete</span>
                             </button>
                         </td>
                     </tr>
@@ -240,14 +272,14 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <div class="form-group">
                     <label>Status Akun:</label>
                     <select name="status" required>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Tidak Aktif</option>
                     </select>
                 </div>
                 
-                <div class="button-group">
-                    <button type="submit">Simpan</button> 
-                    <button type="button" onclick="closeForm('createForm')">Batal</button>
+                <div class="button-group my-5">
+                    <button type="submit"class="font-semibold bg-green-500 py-1 px-2 rounded-full my-1 text-white">Simpan</button> 
+                    <button type="button" class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1 text-white" onclick="closeForm('createForm')">Batal</button>
                 </div>
             </form>
         </div>
@@ -313,28 +345,42 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <div class="form-group">
                     <label>Status Akun:</label>
                     <select name="status" id="edit_status" required>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Tidak Aktif</option>
                     </select>
                 </div>
                 
-                <div class="button-group">
-                    <button type="submit">Update</button> 
-                    <button type="button" onclick="closeForm('editForm')">Batal</button>
+                <div class="button-group flex justify-end gap-2 my-5">
+                    <button type="submit" class="font-semibold bg-green-500 py-1 px-2 rounded-full my-1 text-white">Update</button> 
+                    <button type="button"  class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1 text-white" onclick="closeForm('editForm')">Batal</button>
                 </div>
             </form>
         </div>
     </div>
     
     <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
-            <p>Yakin ingin hapus anggota ini?</p>
-            <div class="button-group">
-                <button type="button" onclick="confirmDelete()">Ya, Hapus</button>
-                <button type="button" onclick="closeForm('deleteConfirmModal')">Batal</button>
-            </div>
-            <input type="hidden" id="deleteUrlInput">
-        </div>
+      <div class="modal-content">
+    <p>Yakin ingin hapus anggota ini?</p>
+
+    <div class="button-group my-5 flex justify-end gap-2">
+        <button 
+            class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1 text-white" 
+            type="button" 
+            onclick="confirmDelete()">
+            Ya, Hapus
+        </button>
+
+        <button 
+            type="button" 
+            class="font-semibold bg-green-500 py-1 px-2 rounded-full my-1 text-white" 
+            onclick="closeForm('deleteConfirmModal')">
+            Batal
+        </button>
+    </div>
+
+    <input type="hidden" id="deleteUrlInput">
+</div>
+
     </div>
 
     <script>

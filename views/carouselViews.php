@@ -25,11 +25,11 @@ $error = $_GET['error'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Carousel Homepage</title>
+    <title>Kelola Buku Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
-        h1 { color: #333; margin-bottom: 10px; }
+       
         .breadcrumb { color: #666; font-size: 14px; margin-bottom: 20px; }
         .breadcrumb a { color: #008CBA; text-decoration: none; }
         .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
@@ -40,21 +40,13 @@ $error = $_GET['error'] ?? '';
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #333; font-weight: bold; }
         select, input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background-color: #008CBA; color: white; }
-        .btn-success { background-color: #28a745; color: white; }
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-warning { background-color: #ffc107; color: #333; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+       table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #f2f2f2; font-weight: bold; }
         tr:hover { background-color: #f9f9f9; }
         .book-img { width: 50px; height: 70px; object-fit: cover; border-radius: 4px; background: #008CBA; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-        .status-active { background-color: #d4edda; color: #155724; }
-        .status-inactive { background-color: #f8d7da; color: #721c24; }
-        .actions { display: flex; gap: 5px; }
+      .actions { display: flex; gap: 5px; }
         .order-input { width: 60px; padding: 5px; text-align: center; }
         .empty-state { text-align: center; padding: 40px; color: #999; }
     </style>
@@ -63,9 +55,9 @@ $error = $_GET['error'] ?? '';
 
     <?php include 'partials/sidebar.php'; ?>
     <div class="container">
-        <h1>Kelola Carousel Homepage</h1>
+        <p class="font-semibold text-xl py-5">Kelola Buku Dashboard</p>
         <div class="breadcrumb">
-            <a href="dashboardAdmin.php">Dashboard</a> / Kelola Carousel Homepage
+            <a href="dashboardAdmin.php">Dashboard</a> / Kelola Buku Dashboard
         </div>
 
         <?php if ($success): ?>
@@ -77,12 +69,12 @@ $error = $_GET['error'] ?? '';
         <?php endif; ?>
 
         <div class="card">
-            <h2 class="card-title">Tambah Buku ke Carousel</h2>
+            <h2 class="card-title">Tambah Buku ke Dashboard</h2>
             <form action="../controller/carouselController.php" method="POST">
                 <input type="hidden" name="action" value="add_book">
                 <div class="form-group">
                     <label for="buku_id">Pilih Buku:</label>
-                    <select name="buku_id" id="buku_id" required>
+                    <select class="h-10" name="buku_id" id="buku_id" required>
                         <option value="">-- Pilih Buku --</option>
                         
                         <?php if (!empty($all_books)): ?>
@@ -97,12 +89,22 @@ $error = $_GET['error'] ?? '';
                         
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">Tambah ke Carousel</button>
-            </form>
+                        <button 
+                type="submit"
+                class="btn-primary font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white">
+
+                <p class="leading-none pt-1">Tambah ke Dashboard</p>
+
+                <img 
+                    src="../assets/images/icon/mdi_add-bold.png"
+                    alt="Tambah"
+                    class="w-4 h-4 ml-2 ">
+            </button>
+     </form>
         </div>
 
         <div class="card">
-            <h2 class="card-title">Daftar Buku di Carousel</h2>
+            <h2 class="card-title">Daftar Buku di Dashboard</h2>
             
             <?php if (!empty($homepage_books)): ?>
                 <form action="../controller/carouselController.php" method="POST">
@@ -115,7 +117,7 @@ $error = $_GET['error'] ?? '';
                                 <th>Judul Buku</th>
                                 <th>Penulis</th>
                                 <th>Kode Buku</th>
-                                <th>Status</th>
+                                <th style="width:180px">Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -141,20 +143,22 @@ $error = $_GET['error'] ?? '';
                                     <td><?php echo htmlspecialchars($book['penulis']); ?></td>
                                     <td><?php echo htmlspecialchars($book['kode_buku']); ?></td>
                                     <td>
-                                        <span class="status-badge <?php echo $book['is_active'] ? 'status-active' : 'status-inactive'; ?>">
-                                            <?php echo $book['is_active'] ? 'Aktif' : 'Nonaktif'; ?>
+                                        <span class="status-badge font-semibold text-lg text-white py-1 px-3 bg-blue-500 <?php echo $book['is_active'] ? 'status-active' : 'status-inactive'; ?>">
+                                            <?php echo $book['is_active'] ? 'Aktif ✅' : 'Nonaktif ❎'; ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="actions">
-                                            <a href="../controller/carouselController.php?action=toggle&id=<?php echo $book['id']; ?>">
-                                                <button type="button" class="btn-warning">
-                                                    <?php echo $book['is_active'] ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                                </button>
+                                        <div class="actions" style="flex-direction:column; align-items:flex-start; gap:8px;">
+                                            <a href="../controller/carouselController.php?action=toggle&id=<?php echo $book['id']; ?>"
+                                               class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-yellow-400 text-black font-semibold">
+                                                <?php echo $book['is_active'] ? 'Nonaktifkan' : 'Aktifkan'; ?>
                                             </a>
-                                            <a href="../controller/carouselController.php?action=remove&id=<?php echo $book['id']; ?>" 
-                                               onclick="return confirm('Yakin ingin menghapus buku ini dari carousel?')">
-                                                <button type="button" class="btn-danger">Hapus</button>
+
+                                            <a href="../controller/carouselController.php?action=remove&id=<?php echo $book['id']; ?>"
+                                               class="inline-flex items-center gap-2 py-1 pr-5 pl-2 rounded-full bg-red-500 font-semibold"
+                                               onclick="return confirm('Yakin ingin menghapus buku ini dari dashboard?')">
+                                                <img src="../assets/images/icon/mi_delete.png" alt="Hapus" style="width:16px;height:16px;" />
+                                                <span>Delete</span>
                                             </a>
                                         </div>
                                     </td>
@@ -162,7 +166,7 @@ $error = $_GET['error'] ?? '';
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <button type="submit" class="btn-success" style="margin-top: 15px;">Simpan Urutan</button>
+                    <button type="submit" class="btn-success bg-green-600 text-white font-semibold py-2 px-2 rounded-full shadow-xl" style="margin-top: 15px;">Simpan Urutan</button>
                 </form>
             <?php else: ?>
                 <div class="empty-state">
@@ -172,7 +176,6 @@ $error = $_GET['error'] ?? '';
             <?php endif; ?>
         </div>
 
-        <a href="dashboardAdmin.php"><button type="button" class="btn-secondary">Kembali ke Dashboard</button></a>
-    </div>
+        </div>
 </body>
 </html>

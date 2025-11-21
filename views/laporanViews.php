@@ -184,9 +184,6 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
     </div>
     <br>
     
-    <a href="dashboardAdmin.php"><button type="button" style="background-color: #6c757d; color: white; border: none;">&laquo; Dashboard</button></a>
-    
-    <button class="btn-logout" onclick="window.location.href='../controller/logout.php'">Logout</button>
-    
+  
 </body>
 </html>

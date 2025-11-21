@@ -130,9 +130,9 @@ $conn->close();
                 <button type="submit" class="rounded-full" style="background-color: #008CBA; color: white; padding:9px 12px; border:none; display:flex; align-items:center; gap:8px;">
                     <!-- inline magnifying glass icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span style="font-weight:600;">Cari</span>
+                    <span style="font-weight:600;" class="pr-2">Cari</span>
                 </button>
-                <a href="dashboardAdmin.php"><button type="button" class="bg-red-500 text-white font-semibold rounded-full" style="  padding:9px 12px; border:1px solid #ddd;">Reset</button></a>
+                <a href="dashboardAdmin.php"><button type="button" class="bg-red-500 text-white font-semibold rounded-full " style="  padding:9px 12px; border:1px solid #ddd;">Reset</button></a>
             </div>
         </form>
         <h2>Peminjaman Aktif </h2>

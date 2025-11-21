@@ -70,7 +70,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
     <form action="bukuViews.php" method="GET">
         
         <label for="search"  >Cari (Judul, Kode, Penulis, Penerbit):</label><br>
-        <div class="relative inline-block py-3" style="vertical-align: middle;">
+        <div class="relative inline-block py-3 mr-2" style="vertical-align: middle;">
             <input type="text" class="rounded-full pr-10" style="padding:5px; padding-right:34px; border:1px solid #ccc;" id="search" name="search" placeholder="Cari buku" value="<?php echo htmlspecialchars($search); ?>">
             <img src="../assets/images/icon/mingcute_search-line (1).png" alt="" aria-hidden="true" class="absolute right-2 top-1/2" style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;" />
         </div>
@@ -235,7 +235,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <div class="form-group"><label>Total Copy:</label><input type="number" name="total_copy" min="1" required></div>
                 <div class="form-group"><label>Cover Buku:</label><input type="file" name="gambar" accept="image/*"></div>
                 
-                <div class="button-group">
+                <div class="button-group flex justify-end gap-2 my-5">
                     <button type="submit" class="bg-green-500  rounded-full py-1 px-2 font-semibold text-white">Simpan</button> 
                     <button type="button" class="bg-red-500 rounded-full py-1 px-2 font-semibold text-white"  onclick="closeForm('createForm')">Batal</button>
                 </div>
@@ -296,9 +296,9 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                     <input type="file" name="gambar" accept="image/*">
                 </div>
                 
-                <div class="button-group">
-                    <button type="submit">Update</button> 
-                    <button type="button" onclick="closeForm('editForm')">Batal</button>
+                <div class="button-group flex justify-end gap-2 my-5">
+                    <button type="submit" class="font-semibold bg-green-500 py-1 px-2 rounded-full my-1 text-white">Update</button> 
+                    <button type="button"class="font-semibold bg-red-500 py-1 px-2 rounded-full my-1 text-white" onclick="closeForm('editForm')">Batal</button>
                 </div>
             </form>
         </div>
@@ -309,9 +309,9 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
             <h2>Konfirmasi Hapus</h2>
             <p>Apakah Anda yakin ingin menghapus data buku ini?</p>
             <input type="hidden" id="deleteUrlInput">
-            <div class="button-group">
-                <button type="button" onclick="confirmDelete()">Ya, Hapus</button>
-                <button type="button" onclick="closeForm('deleteConfirmModal')">Batal</button>
+            <div class="button-group flex justify-end gap-2 my-5">
+                <button type="button"class="bg-green-500 rounded-full py-1 px-2 font-semibold text-white" onclick="confirmDelete()">Ya, Hapus</button>
+                <button type="button"class="bg-red-500 rounded-full py-1 px-2 font-semibold text-white" onclick="closeForm('deleteConfirmModal')">Batal</button>
             </div>
         </div>
     </div>
