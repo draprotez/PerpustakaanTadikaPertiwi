@@ -101,7 +101,7 @@ if ($result) {
     <img class="w-5 h-5 ml-1" src="../assets/images/icon/mingcute_search-line.png" alt="">
 </button>
  <?php if($search): ?>
-                <a href="lihatBukuViews.php" style="padding: 12px 15px; background: #eee; color: #333; text-decoration:none; border-radius:5px;">Reset</a>
+                <a href="lihatBukuViews.php" class="bg-red-500 rounded-full text-white py-2 px-2 font-semibold">Reset</a>
             <?php endif; ?>
         </form>
 
