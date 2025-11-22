@@ -60,7 +60,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .current-cover-preview { max-width: 100px; display: block; margin-bottom: 10px; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
 

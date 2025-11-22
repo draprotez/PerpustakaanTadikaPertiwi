@@ -25,8 +25,9 @@ if (!$user_data) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profil Saya</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
+        body { font-family: Arial, sans-serif; margin: 20px;  }
         .form-container {
+            
             width: 500px;
             margin: 0 auto;
             padding: 20px;
@@ -38,19 +39,16 @@ if (!$user_data) {
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
         .form-group input[disabled] { background-color: #eee; }
-        .button-group { margin-top: 20px; text-align: right; }
-        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 3px; margin-left: 5px; }
-        button[type="submit"] { background-color: #4CAF50; color: white; }
-        button[type="button"] { background-color: #aaa; color: white; }
+
         .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
         .alert-success { background-color: #d4edda; color: #155724; }
         .alert-error { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7] ">
 
     <?php include 'partials/sidebar.php'; ?>
-
+ <p class="my-5 font-semibold text-xl">Pengaturan Profile</p>
     <div class="form-container">
         <h2>Edit Profil Saya</h2>
 
@@ -81,9 +79,9 @@ if (!$user_data) {
                 <input type="text" value="<?php echo htmlspecialchars($user_data['role']); ?>" disabled>
             </div>
             
-            <div class="button-group">
-                <button type="submit">Update Profil</button> 
-                <button type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
+            <div class="button-group flex gap-4 justify-end">
+                <button class="bg-green-500 rounded-full py-2 px-2 font-semibold text-white" type="submit">Update Profil</button> 
+                <button class="bg-blue-500 rounded-full py-2 px-2 font-semibold text-white" type="button" onclick="window.location.href='dashboardAdmin.php'">Kembali</button>
             </div>
         </form>
     </div>

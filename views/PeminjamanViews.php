@@ -52,7 +52,7 @@ $buku_list_available = getAllAvailableBuku($conn);
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
 

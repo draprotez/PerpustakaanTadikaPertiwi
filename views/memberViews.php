@@ -48,7 +48,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         .siswa-fields, .guru-fields { display: none; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
 

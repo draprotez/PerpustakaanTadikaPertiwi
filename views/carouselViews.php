@@ -51,7 +51,7 @@ $error = $_GET['error'] ?? '';
         .empty-state { text-align: center; padding: 40px; color: #999; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
     <div class="container">
@@ -112,13 +112,13 @@ $error = $_GET['error'] ?? '';
                     <table>
                         <thead>
                             <tr>
-                                <th>Urutan</th>
-                                <th>Cover</th>
-                                <th>Judul Buku</th>
-                                <th>Penulis</th>
-                                <th>Kode Buku</th>
-                                <th style="width:180px">Status</th>
-                                <th>Aksi</th>
+                                <th class="bg-[#73A7DB]">Urutan</th>
+                                <th class="bg-[#73A7DB]">Cover</th>
+                                <th class="bg-[#73A7DB]">Judul Buku</th>
+                                <th class="bg-[#73A7DB]">Penulis</th>
+                                <th class="bg-[#73A7DB]">Kode Buku</th>
+                                <th class="bg-[#73A7DB] w-[180px]">Status</th>
+                                <th class="bg-[#73A7DB]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

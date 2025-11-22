@@ -93,7 +93,7 @@ $conn->close();
         .access-denied { text-align: center; margin: 50px; padding: 20px; background-color: #ffebee; border: 1px solid #f44336; border-radius: 5px; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php if ($isLoggedIn && $isAdmin) : ?>
 
@@ -187,13 +187,41 @@ $conn->close();
 
         </main>
     
-    <?php else : ?>
-        <div class="access-denied">
-            <h2>Akses Ditolak</h2>
-            <p>Halaman ini hanya dapat diakses oleh petugas perpustakaan.</p>
-            <p>Silakan <a href="../login.php">login sebagai petugas</a> untuk mengakses dashboard.</p>
-            <a  href="dashboardAdmin.php" ><button type="button">Kembali ke Halaman Utama</button></a>
+   <?php else : ?>
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+
+    <div class="bg-white shadow-lg rounded-2xl p-8 max-w-md text-center border border-gray-200">
+
+        <div class="mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/6195/6195699.png" 
+                 class="w-20 mx-auto opacity-80" alt="Access Denied Icon">
         </div>
-    <?php endif; ?>
+
+        <h2 class="text-2xl font-bold text-red-600 mb-2">
+            Akses Ditolak
+        </h2>
+
+        <p class="text-gray-600 mb-4">
+            Halaman ini hanya dapat diakses oleh petugas perpustakaan.
+        </p>
+
+        <p class="text-gray-600 mb-6">
+            Silakan <a href="../login.php" class="text-blue-600 font-semibold hover:underline">
+                login sebagai petugas
+            </a> untuk mengakses dashboard.
+        </p>
+
+        <a href="../login.php">
+            <button 
+                class="w-full bg-[#1C77D2] hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition">
+                Kembali ke Halaman Utama
+            </button>
+        </a>
+
+    </div>
+
+</div>
+<?php endif; ?>
+
 </body>
 </html>

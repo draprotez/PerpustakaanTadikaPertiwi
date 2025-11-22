@@ -45,18 +45,8 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        button, select, input[type="text"] { 
-            padding: 8px 12px; 
-            margin: 0 5px; 
-            border-radius: 3px; 
-            border: 1px solid #ddd; 
-            box-sizing: border-box; 
-        }
-        button { cursor: pointer; background-color: #008CBA; color: white; border-color: #008CBA; }
-        button[type="button"] { background-color: #f0f0f0; color: #333; border-color: #ddd; }
-        .filter-form { margin: 20px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; }
-        .btn-logout { background-color: red; color: white; padding: 8px 15px; }
-        .pagination { margin-top: 20px; text-align: center; }
+      
+           .pagination { margin-top: 20px; text-align: center; }
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
@@ -71,31 +61,49 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <h1>Laporan Peminjaman Buku</h1>
+    <p class="font-semibold text-xl my-5">Laporan Peminjaman Buku</p>
 
     <div class="filter-form">
         <form action="laporanViews.php" method="GET">
             
             <label for="status">Status:</label>
-            <select id="status" name="status">
+            <select class="h-10 my-2 border-2 rounded-full px-2 w-[170px]" id="status" name="status">
                 <option value="all" <?php if ($status == 'all') echo 'selected'; ?>>Semua Status</option>
                 <option value="borrowed" <?php if ($status == 'borrowed') echo 'selected'; ?>>Sedang Dipinjam (Belum Kembali)</option>
                 <option value="returned" <?php if ($status == 'returned') echo 'selected'; ?>>Sudah Dikembalikan (Riwayat)</option>
             </select>
-
+<br>
             <label for="timeframe">Waktu:</label>
-            <select id="timeframe" name="timeframe">
+            <select class="my-2 h-10 px-2 rounded-full border-2" id="timeframe" name="timeframe">
                 <option value="all" <?php if ($timeframe == 'all') echo 'selected'; ?>>Semua Waktu</option>
                 <option value="harian" <?php if ($timeframe == 'harian') echo 'selected'; ?>>Harian (Hari Ini)</option>
                 <option value="mingguan" <?php if ($timeframe == 'mingguan') echo 'selected'; ?>>Mingguan (7 Hari)</option>
                 <option value="bulanan" <?php if ($timeframe == 'bulanan') echo 'selected'; ?>>Bulanan (1 Bulan)</option>
             </select>
-            
-            <label for="search">Cari:</label>
-            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="NISN, Nama, atau Judul...">
-            
-            <button type="submit">Filter</button>
-            <a href="laporanViews.php"><button type="button">Reset</button></a>
+            <br>
+            <label class="ml-3" for="search">Cari:</label>
+           <div class="relative inline-block py-3 mx-2" style="vertical-align: middle;">
+    <input 
+        type="text" 
+        id="search" 
+        name="search" 
+        value="<?php echo htmlspecialchars($search); ?>" 
+        placeholder="NISN, Nama, atau Judul..."
+        class="rounded-full pr-10 pl-2 border-2 border-gray-300 h-10"
+        style="padding:5px; padding-right:34px; ;"
+    >
+
+    <img 
+        src="../assets/images/icon/mingcute_search-line (1).png" 
+        alt="" 
+        aria-hidden="true" 
+        class="absolute right-2 top-1/2" 
+        style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;"
+    />
+</div>
+
+            <button class="bg-blue-500 text-white font-semibold rounded-full px-5 py-2" type="submit">Cari</button>
+            <a class="bg-red-500 text-white font-semibold rounded-full px-5 py-3" href="laporanViews.php"><button type="button">Reset</button></a>
         </form>
     </div>
     
@@ -109,14 +117,14 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
     <table>
         <thead>
             <tr>
-                <th>No</th>
-                <th>NISN</th>
-                <th>Nama Peminjam</th>
-                <th>Judul Buku</th>
-                <th>Tgl Pinjam</th>
-                <th>Tenggat Waktu</th>
-                <th>Tgl Kembali</th>
-                <th>Status</th>
+                <th class="bg-[#73A7DB]">No</th>
+                <th class="bg-[#73A7DB]">NISN</th>
+                <th class="bg-[#73A7DB]">Nama Peminjam</th>
+                <th class="bg-[#73A7DB]">Judul Buku</th>
+                <th class="bg-[#73A7DB]">Tgl Pinjam</th>
+                <th class="bg-[#73A7DB]">Tenggat Waktu</th>
+                <th class="bg-[#73A7DB]">Tgl Kembali</th>
+                <th class="bg-[#73A7DB]">Status</th>
             </tr>
         </thead>
         <tbody>
