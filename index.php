@@ -38,6 +38,8 @@ if ($result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perpustakaan Tadika Pertiwi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         /* CSS SAMA SEPERTI SEBELUMNYA */
        
@@ -62,7 +64,9 @@ if ($result) {
         .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.3s; }
         .dot.active { background: #008CBA; width: 25px; border-radius: 5px; }
-
+         html {
+        scroll-behavior: smooth;
+    }
         /* ▼▼▼ CSS BARU UNTUK PESAN KOSONG ▼▼▼ */
         .empty-carousel {
             text-align: center;
@@ -84,23 +88,29 @@ if ($result) {
                 <img class="rounded-full w-12 " src="assets/images/logo/logo-smk.png" alt="">
                 <p>E-LIBRARY <br> <strong>SMK TADIKA PERTIWI</strong></p>
             </div>
-           <div class="nav-buttons gap-12 flex font-semibold">
+           <div class="nav-buttons gap-12 flex font-bold">
                 <a href="#" class="btn-secondary hover:text-yellow-400">Beranda</a>
                 <a href="#about" class="btn-secondary  hover:text-yellow-400">Tentang</a>
-                <a href="#" class="btn-secondary  hover:text-yellow-400">Organisasi</a>
-                <a href="#" class="btn-secondary  hover:text-yellow-400">Kontak</a>
+                <a href="#contact" class="btn-secondary  hover:text-yellow-400">Kontak</a>
+                <a href="#organisasi" class="btn-secondary  hover:text-yellow-400">Organisasi</a>
                 <a href="logout.php" class="btn-danger  hover:text-black hover:rounded-lg hover:bg-white px-2">Keluar</a>
             </div>
           </div>
         <?php else: ?>
             
-            <div class="nav-buttons">
-                <a href="#" class="btn-secondary">Beranda</a>
-                <a href="#" class="btn-secondary">Tentang</a>
-                <a href="#" class="btn-secondary">Organisasi</a>
-                <a href="#" class="btn-secondary">Kontak</a>
-                <a href="login.php" class="btn-primary">Masuk</a>
+             <div class=" container nav-main flex bg-[#1C77D2] justify-between items-center py-3 text-white">
+            <div class="logo flex items-center gap-3">
+                <img class="rounded-full w-12 " src="assets/images/logo/logo-smk.png" alt="">
+                <p>E-LIBRARY <br> <strong>SMK TADIKA PERTIWI</strong></p>
             </div>
+           <div class="nav-buttons gap-12 flex font-bold">
+                <a href="#" class="btn-secondary hover:text-yellow-400">Beranda</a>
+                <a href="#about" class="btn-secondary  hover:text-yellow-400">Tentang</a>
+                <a href="#contact" class="btn-secondary  hover:text-yellow-400">Kontak</a>
+                <a href="#organisasi" class="btn-secondary  hover:text-yellow-400">Organisasi</a>
+                <a href="login.php" class="btn-danger  hover:text-black hover:rounded-lg hover:bg-white px-2">Masuk</a>
+            </div>
+          </div>
         <?php endif; ?>
         <div class="bg-main">
             <img src="assets/images/logo/main-bg.png" alt="">
@@ -120,8 +130,8 @@ if ($result) {
 </div>
 
 
-        <div class="book-section">
-            <h2 class="flex justify-center font-semibold text-xl">Koleksi Buku Pilihan</h2>
+        <div class="book-section" id="katalog buku">
+            <a href="" class="flex justify-center font-semibold text-xl">Koleksi Buku Pilihan</a>
 
             <?php if (!empty($books)): ?>
                 <div class="carousel-container pl-[200px]">
@@ -161,7 +171,7 @@ if ($result) {
         </div>
         </div>
 
-   <div id="about" class="bg-[#1C77D2] w-full max-w-[800px] mx-auto p-10 text-white mt-5 shadow-lg">
+   <div id="about" class="bg-[#1C77D2] w-full max-w-[800px] mx-auto p-10 text-white mt-5 mb-5 shadow-lg shadow-blue-200 rounded-lg">
     <img src="assets/images/logo/logo-smk.png" class="w-20 mx-auto mb-4 " alt="">
     
     <h1 class="text-2xl font-bold text-center mb-3">
@@ -179,11 +189,99 @@ if ($result) {
 
 
     <div>
-        <h2>VIDEO PROFILE PERPUSTAKAAN</h2>
-        <h1><b>SMK TADIKA PERTIWI</b></h1>
+        <h2 class=" font-semibold text-xl my-5 mx-5 flex justify-center ">Berita E-Library</h2>
+      
+        <img src="assets/images/logo//Poster.svg" alt="Berita 1" class="w-[500px] mx-auto">
         
        
+    </div>  
+    <p class="text-xl font-semibold justify-center flex mt-5 mb-2">Lokasi Perpustakaan</p>
+
+   <div class="w-full flex justify-center py-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-0">
+
+        <!-- MAP -->
+        <div class="w-[300px] h-[300px] relative overflow-hidden shadow justify-center">
+            <iframe 
+                class="w-full h-full"
+                src="https://www.google.com/maps?q=-6.340040503434626,106.78242625327886&hl=es;z=18&output=embed"
+                allowfullscreen=""
+                loading="lazy">
+            </iframe>
+
+            <div class="absolute top-2 left-2 flex items-center gap-2 bg-white/80 backdrop-blur-sm px-0 py-1 shadow text-sm">
+                <img src="assets/images/icon/location-pin.png" class="w-4 h-4" alt="pin">
+                <span class="font-semibold">Lokasi Perpustakaan</span>
+            </div>
+        </div>
+
+        <!-- TEXT -->
+      <div class="p-6 bg-[#d9e4f0] w-[320px] h-[300px]" id="contact">
+    <h2 class="text-xl font-bold mb-3">Perpustakaan SMK Tadika Pertiwi</h2>
+
+    <p class="mb-1">Jl. Haji Jaeran No.1, Cinere, Depok</p>
+
+    <p class="mb-1">Telepon : +62895383578689</p>
+    <p class="mb-1">E-mail : tadika.pertiwi@gmail.com</p>
+    <p class="mb-3">G-mail : info@smktadikapertiiwi</p>
+
+    <p class="mb-2 font-semibold">Ikuti Kami di Media Sosial</p>
+
+    <div class="flex items-center gap-3 text-xl">
+        <a href="https://www.facebook.com/share/14LoiwFZkmv/" class="fa-brands fa-facebook"></a>
+        <a href="https://www.instagram.com/smktadikapertiwi_?igsh=cTV4NHlkc3BtODlm" class="fa-brands fa-instagram"></a>
+        <a href="https://www.youtube.com/@smktadikapertiwi3159" class="fa-brands fa-youtube"></a>
     </div>
+</div>
+
+
+    </div>
+</div>
+
+<!-- ORGANISASI -->
+<div id="organisasi" > 
+    <p class="text-xl font-semibold justify-center flex mt-5 mb-5">Struktur Organisasi</p>
+   <img src="assets/images/logo/Struktur.png" alt="Struktur Organisasi" class="w-[500px] mx-auto mb-10 shadow-lg shadow-blue-200">
+</div>
+
+        <footer class="bg-[#1F7BD8] text-white py-8 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+
+        <!-- LEFT (Logo + Menu) -->
+        <div class="flex flex-col items-start">
+            <img src="assets/images/logo/logo-smk.png" class="w-16 mb-3" alt="logo">
+            <ul class="space-y-1">
+               <a href="index.php"> <li>Beranda</li></a>
+                <a href="#katalog buku"><li>Katalog Buku</li></a>
+                <a href="#about"><li>Tentang Kami</li>
+            </ul></a>
+        </div>
+
+        <!-- MIDDLE (Shortcut Link) -->
+        <div class="flex flex-col items-start mt-12 md:items-center">
+            <h3 class="font-semibold mb-2">Shortcut Link :</h3>
+            <ul class="space-y-1">
+                <a href="https://www.smktadikapertiwi.sch.id/"><li>Website Profile Sekolah</li></a>
+                <li>Website Perpustakaan</li>
+            </ul>
+        </div>
+
+        <!-- RIGHT (Kontak) -->
+        <div class="flex flex-col items-start mt-12 md:items-end">
+            <h3 class="font-semibold mb-2">Kontak :</h3>
+            <ul class="space-y-1">
+                <li>0895383578689</li>
+                <li>tadika.pertiwi@gmail.com</li>
+                <li>info@smktadikapertiwi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="text-center text-xs mt-6">
+        © 2025 Perpustakaan SMK Tadika Pertiwi. All Rights Reserved.
+    </div>
+</footer>
 
 
     <script>

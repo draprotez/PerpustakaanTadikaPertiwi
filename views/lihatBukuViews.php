@@ -2,6 +2,7 @@
 //lihatBukuViews.php
 session_start();
 require_once '../config/database.php';
+include '../header.php';
 
 if (!isset($_SESSION['member_id'])) {
     header("Location: ../login.php");
@@ -36,11 +37,7 @@ if ($result) {
         .container { max-width: 1200px; margin: 0 auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         h1 { color: #333; margin: 0; }
-        .btn-back { text-decoration: none; background: #6c757d; color: white; padding: 10px 20px; border-radius: 5px; }
-        .search-box { margin-bottom: 30px; display: flex; gap: 10px; }
-        .search-box input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
-        .search-box button { padding: 12px 25px; background: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+      .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
         .book-card { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; display: flex; flex-direction: column; }
         .book-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
         .card-img { width: 100%; height: 280px; background-color: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #aaa; font-size: 3rem; }
@@ -74,12 +71,16 @@ if ($result) {
 <body>
     <div class="container">
         <div class="header">
-            <div>
-                <h1>Koleksi Buku</h1>
-                <p>Halo, <b><?php echo htmlspecialchars($nama_user); ?></b>! Pilih buku yang ingin Anda baca.</p>
+            
+            <div class="bg-white w-full justify-between flex items-center px-6 py-4 rounded-lg shadow-md">
+                <p class="text-xl font-semibold">Koleksi Buku</p>
+                <p class="text-lg font-medium">Halo <b><?php echo htmlspecialchars($nama_user); ?>👋</b>! Pilih buku yang ingin Anda baca.</p>
+                  <div>
+                      <a href="../index.php" class="bg-[#1C77D2] rounded-lg text-white py-2 px-2 font-semibold hover:text-black hover:bg-yellow-400">Kembali ke Beranda</a>
+      
+                  </div>
             </div>
-            <a href="../index.php" class="btn-back">Kembali ke Beranda</a>
-        </div>
+          </div>
 
         <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success">
@@ -93,10 +94,13 @@ if ($result) {
             </div>
         <?php endif; ?>
 
-        <form action="" method="GET" class="search-box">
-            <input type="text" name="search" placeholder="Cari judul buku, penulis, atau penerbit..." value="<?php echo htmlspecialchars($search); ?>">
-            <button type="submit">Cari</button>
-            <?php if($search): ?>
+        <form action="" method="GET" class="search-box flex">
+            <input class="w-[400px] h-10 rounded-full px-2" type="text" name="search" placeholder="Cari judul buku, penulis, atau penerbit..." value="<?php echo htmlspecialchars($search); ?>">
+           <button type="submit" class="flex items-center mx-2 rounded-full bg-blue-400 py-2 px-3 font-semibold text-white">
+    Cari 
+    <img class="w-5 h-5 ml-1" src="../assets/images/icon/mingcute_search-line.png" alt="">
+</button>
+ <?php if($search): ?>
                 <a href="lihatBukuViews.php" style="padding: 12px 15px; background: #eee; color: #333; text-decoration:none; border-radius:5px;">Reset</a>
             <?php endif; ?>
         </form>
@@ -161,7 +165,44 @@ if ($result) {
             </div>
         </div>
     </div>
+  <footer class="bg-[#1F7BD8] text-white py-8 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
 
+        <!-- LEFT (Logo + Menu) -->
+        <div class="flex flex-col items-start">
+            <img src="../assets/images/logo/logo-smk.png" class="w-16 mb-3" alt="logo">
+            <ul class="space-y-1">
+               <a href="../index.php"> <li>Beranda</li></a>
+                <a href="#katalog buku"><li>Katalog Buku</li></a>
+                <a href="#about"><li>Tentang Kami</li>
+            </ul></a>
+        </div>
+
+        <!-- MIDDLE (Shortcut Link) -->
+        <div class="flex flex-col items-start mt-12 md:items-center">
+            <h3 class="font-semibold mb-2">Shortcut Link :</h3>
+            <ul class="space-y-1">
+                <a href="https://www.smktadikapertiwi.sch.id/"><li>Website Profile Sekolah</li></a>
+                <li>Website Perpustakaan</li>
+            </ul>
+        </div>
+
+        <!-- RIGHT (Kontak) -->
+        <div class="flex flex-col items-start mt-12 md:items-end">
+            <h3 class="font-semibold mb-2">Kontak :</h3>
+            <ul class="space-y-1">
+                <li>0895383578689</li>
+                <li>tadika.pertiwi@gmail.com</li>
+                <li>info@smktadikapertiwi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="text-center text-xs mt-6">
+        © 2025 Perpustakaan SMK Tadika Pertiwi. All Rights Reserved.
+    </div>
+</footer>
     <script>
         const modal = document.getElementById('bookModal');
         const btnPinjam = document.getElementById('btnPinjam');
