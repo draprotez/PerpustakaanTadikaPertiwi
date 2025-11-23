@@ -49,7 +49,9 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
             color: #6c757d; 
             cursor: not-allowed; 
         }
-
+        td {
+    background-color: white !important;
+}
        
         .btn-logout { background-color: red; color: white; padding: 8px 15px; } 
         .pagination { margin-top: 20px; text-align: center; } 
@@ -64,10 +66,10 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <p class="font-semibold text-xl py-5">Kelola Data Buku</p>
+    <p class="font-semibold text-xl px-2 mt-2  bg-white rounded-xl shadow-md py-4 md:p-6">Kelola Data Buku</p>
 
    
-    <form action="bukuViews.php" method="GET">
+    <form class="my-2" action="bukuViews.php" method="GET">
         
         <label for="search"  >Cari (Judul, Kode, Penulis, Penerbit):</label><br>
         <div class="relative inline-block py-3 mr-2" style="vertical-align: middle;">

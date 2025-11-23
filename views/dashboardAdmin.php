@@ -2,7 +2,7 @@
 //dashboardAdmin.php
 session_start();
 include '../config/database.php';
- include '../header.php';
+include '../header.php';
 
 $isLoggedIn = false;
 $isAdmin = false;
@@ -71,157 +71,246 @@ if (isset($_SESSION['user_id'])) {
 $conn->close();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perpustakaan Tadika Pertiwi</title>
+    <title>Dashboard Admin - Perpustakaan Tadika Pertiwi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .dashboard-container { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0; }
-        .dashboard-box { border: 1px solid #ddd; background-color: #f9f9f9; padding: 20px; width: 250px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .dashboard-box h3 { margin-top: 0; color: #333; }
-        .dashboard-box .count { font-size: 2.5em; font-weight: bold;  }
-        button { padding: 10px 15px; margin: 5px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0; }
-        button:hover { background-color: #e0e0e0; }
-        .loan-table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
-        .loan-table th, .loan-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    .loan-table th { background-color: #73A7DB; color: #333; }
-        .status-overdue { color: #D32F2F; font-weight: bold; }
-        .status-borrowed { color: #388E3C; }
-        .dashboard-box.overdue .count { color: #D32F2F; }
-        .access-denied { text-align: center; margin: 50px; padding: 20px; background-color: #ffebee; border: 1px solid #f44336; border-radius: 5px; }
+        /* Responsive table wrapper */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Custom scrollbar untuk tabel */
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
-<body class="ml-[320px] bg-[#EDF0F7]">
+<body class="bg-[#EDF0F7]">
 
-    <?php if ($isLoggedIn && $isAdmin) : ?>
-
-        <main class="p-6">
-        <p class="text-xl font-semibold">Dashboard Petugas (<?php echo htmlspecialchars($role_user); ?>)</p>
-    <p class="text-xl font-semibold">Selamat datang, <?php echo htmlspecialchars($nama_user); ?>!</p>
-        <div class="dashboard-container ">
-            <div class="dashboard-box bg-[#3FB3AD] text-white">
-                <div class="card-box flex gap-3px"><img src="../assets/images/icon/Vector.png" class="mr-4 w-5 h-5" alt=""><p class=" font-semibold text-white">Total Judul Buku</p></div>
-                <p class="count text-white"><?php echo $total_buku; ?></p>
-                <a href="bukuViews.php">Kelola Buku &raquo;</a>
-            </div>
-            
-            <div class="dashboard-box bg-[#F6BC3D] text-white">
-               <div class="card-box flex"> <img src="../assets/images/icon/majesticons_user.png" class="mr-4 w-6 h-6" alt=""> <p class="font-semibold">Total Anggota</p></div>
-                <p class="count text-white"><?php echo $total_member; ?></p>
-                <a href="memberViews.php">Kelola Anggota &raquo;</a>
-            </div>
-
-            <div class="dashboard-box bg-[#DF4B41] text-white <?php echo ($total_overdue > 0) ? 'overdue' : ''; ?>">
-                <div class="card-box flex"><img src="../assets/images/icon/pajamas_calendar-overdue.png" class="mr-4 w-5 h-5"alt=""><p class="font-semibold">Buku Kadaluarsa</p></div>
-                <p class="count text-white"><?php echo $total_overdue; ?></p>
-                <a href="kelolaPeminjamanViews.php">Kelola Peminjaman &raquo;</a>
-            </div>
-        </div>
+    <!-- Wrapper untuk sidebar dan main content -->
+    <div class="flex min-h-screen">
+        
         <?php include 'partials/sidebar.php'; ?>
-   
-        <hr style="margin-top: 20px;">
 
-        <form action="" method="GET" style="margin: 20px 0; width:100%;">
-            <label for="search"><b>Cari Peminjaman Aktif (Judul, Nama, NISN):</b></label><br>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-                <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Cari..." style="flex:1; padding:9px; border:1px solid #ccc; border-radius:100px;" />
-                <button type="submit" class="rounded-full" style="background-color: #008CBA; color: white; padding:9px 12px; border:none; display:flex; align-items:center; gap:8px;">
-                    <!-- inline magnifying glass icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span style="font-weight:600;" class="pr-2">Cari</span>
-                </button>
-                <a href="dashboardAdmin.php"><button type="button" class="bg-red-500 text-white font-semibold rounded-full " style="  padding:9px 12px; border:1px solid #ddd;">Reset</button></a>
-            </div>
-        </form>
-        <h2>Peminjaman Aktif </h2>
-        <table class="loan-table">
-            <thead>
-                <tr>
-                    <th class="bg-[#73A7DB]">No</th>
-                    <th>Judul Buku</th>
-                    <th>Jumlah</th>
-                    <th>NISN</th>
-                    <th>Nama Peminjam</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($active_loans)): ?>
-                    <tr>
-                        <td colspan="6" style="text-align: center;">
-                            <?php if (!empty($search)): ?>
-                                Tidak ditemukan peminjaman aktif dengan kata kunci "<?php echo htmlspecialchars($search); ?>".
-                            <?php else: ?>
-                                Tidak ada data peminjaman aktif.
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php $no = 1; ?>
-                    <?php foreach ($active_loans as $loan): ?>
-                        <tr>
-                            <td><?php echo $no++; ?></td>
-                            <td><?php echo htmlspecialchars($loan['judul_buku']); ?></td>
-                            <td>1</td>
-                            <td><?php echo htmlspecialchars($loan['nisn'] ?? '-'); ?></td>
-                            <td><?php echo htmlspecialchars($loan['name']); ?></td>
-                            <td>
-                                <?php
-                                if ($loan['status'] == 'overdue') {
-                                    echo '<span class="status-overdue border px-2 py-1.5 rounded-xl border-black bg-red-500 font-semibold text-black">Kadaluarsa</span>';
-                                } elseif ($loan['status'] == 'borrowed') {
-                                    echo '<span class="status-borrowed border px-2 py-1.5 rounded-xl border-black bg-yellow-200 font-semibold text-black">Dipinjam</span>';
-                                } else {
-                                    echo htmlspecialchars($loan['status']);
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <hr>
+        <!-- Main Content Area -->
+        <main class="flex-1 lg:ml-80 p-4 md:p-6">
+            
+            <?php if ($isLoggedIn && $isAdmin) : ?>
+
+                <!-- Header Dashboard -->
+                <div class="mb-6 bg-white rounded-xl shadow-md p-4 md:p-6">
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-1">
+                        Dashboard Petugas (<?php echo htmlspecialchars($role_user); ?>)
+                    </h1>
+                    <p class="text-base md:text-lg text-gray-600">
+                        Selamat datang, <span class="font-semibold"><?php echo htmlspecialchars($nama_user); ?></span>!
+                    </p>
+                </div>
+
+                <!-- Dashboard Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+                    
+                    <!-- Card Total Buku -->
+                    <div class="bg-[#3FB3AD] text-white rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="../assets/images/icon/Vector.png" class="w-5 h-5" alt="Book Icon">
+                            <h3 class="font-semibold text-sm md:text-base">Total Judul Buku</h3>
+                        </div>
+                        <p class="text-4xl md:text-5xl font-bold mb-3"><?php echo $total_buku; ?></p>
+                        <a href="bukuViews.php" class="inline-block text-sm font-medium hover:underline">
+                            Kelola Buku &raquo;
+                        </a>
+                    </div>
+
+                    <!-- Card Total Anggota -->
+                    <div class="bg-[#F6BC3D] text-white rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="../assets/images/icon/majesticons_user.png" class="w-6 h-6" alt="User Icon">
+                            <h3 class="font-semibold text-sm md:text-base">Total Anggota</h3>
+                        </div>
+                        <p class="text-4xl md:text-5xl font-bold mb-3"><?php echo $total_member; ?></p>
+                        <a href="memberViews.php" class="inline-block text-sm font-medium hover:underline">
+                            Kelola Anggota &raquo;
+                        </a>
+                    </div>
+
+                    <!-- Card Buku Kadaluarsa -->
+                    <div class="bg-[#DF4B41] text-white rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="../assets/images/icon/pajamas_calendar-overdue.png" class="w-5 h-5" alt="Calendar Icon">
+                            <h3 class="font-semibold text-sm md:text-base">Buku Kadaluarsa</h3>
+                        </div>
+                        <p class="text-4xl md:text-5xl font-bold mb-3"><?php echo $total_overdue; ?></p>
+                        <a href="kelolaPeminjamanViews.php" class="inline-block text-sm font-medium hover:underline">
+                            Kelola Peminjaman &raquo;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <hr class="my-6 md:my-8 border-gray-300">
+
+                <!-- Search Form -->
+                <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6">
+                    <form action="" method="GET" class="space-y-4">
+                        <label for="search" class="block text-sm md:text-base font-semibold text-gray-700">
+                            Cari Peminjaman Aktif (Judul, Nama, NISN):
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input 
+                                type="text" 
+                                id="search" 
+                                name="search" 
+                                value="<?php echo htmlspecialchars($search); ?>" 
+                                placeholder="Ketik untuk mencari..." 
+                                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+                            />
+                            <div class="flex gap-2">
+                                <button 
+                                    type="submit" 
+                                    class="flex-1 sm:flex-none bg-[#008CBA] hover:bg-[#007399] text-white px-5 py-2.5 rounded-full font-semibold flex items-center justify-center gap-2 transition text-sm md:text-base"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <span>Cari</span>
+                                </button>
+                                <a href="dashboardAdmin.php" class="flex-1 sm:flex-none">
+                                    <button 
+                                        type="button" 
+                                        class="w-full bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-full font-semibold transition text-sm md:text-base"
+                                    >
+                                        Reset
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Peminjaman Aktif Table -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-4 md:p-6 border-b border-gray-200">
+                        <h2 class="text-lg md:text-xl font-bold text-gray-800">Peminjaman Aktif</h2>
+                    </div>
+
+                    <!-- Responsive Table Wrapper -->
+                    <div class="table-responsive">
+                        <table class="w-full min-w-[640px]">
+                            <thead>
+                                <tr class="bg-[#73A7DB]">
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">No</th>
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Judul Buku</th>
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Jumlah</th>
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">NISN</th>
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Nama Peminjam</th>
+                                    <th class="px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <?php if (empty($active_loans)): ?>
+                                    <tr>
+                                        <td colspan="6" class="px-4 py-8 text-center text-gray-500 text-sm md:text-base">
+                                            <?php if (!empty($search)): ?>
+                                                Tidak ditemukan peminjaman aktif dengan kata kunci "<strong><?php echo htmlspecialchars($search); ?></strong>".
+                                            <?php else: ?>
+                                                Tidak ada data peminjaman aktif.
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php $no = 1; ?>
+                                    <?php foreach ($active_loans as $loan): ?>
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-4 py-3 text-sm md:text-base text-gray-700"><?php echo $no++; ?></td>
+                                            <td class="px-4 py-3 text-sm md:text-base text-gray-800 font-medium">
+                                                <?php echo htmlspecialchars($loan['judul_buku']); ?>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm md:text-base text-gray-700">1</td>
+                                            <td class="px-4 py-3 text-sm md:text-base text-gray-700">
+                                                <?php echo htmlspecialchars($loan['nisn'] ?? '-'); ?>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm md:text-base text-gray-700">
+                                                <?php echo htmlspecialchars($loan['name']); ?>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <?php if ($loan['status'] == 'overdue'): ?>
+                                                    <span class="inline-block px-3 py-1.5 bg-red-500 text-black font-semibold rounded-xl border border-black text-xs md:text-sm">
+                                                        Kadaluarsa
+                                                    </span>
+                                                <?php elseif ($loan['status'] == 'borrowed'): ?>
+                                                    <span class="inline-block px-3 py-1.5 bg-yellow-200 text-black font-semibold rounded-xl border border-black text-xs md:text-sm">
+                                                        Dipinjam
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-sm md:text-base text-gray-700">
+                                                        <?php echo htmlspecialchars($loan['status']); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Note untuk mobile -->
+                <div class="mt-4 text-xs md:text-sm text-gray-500 text-center sm:hidden">
+                    💡 Geser tabel ke kiri/kanan untuk melihat lebih banyak data
+                </div>
+
+            <?php else : ?>
+                
+                <!-- Access Denied -->
+                <div class="min-h-screen flex items-center justify-center px-4">
+                    <div class="bg-white shadow-lg rounded-2xl p-6 md:p-8 max-w-md w-full text-center border border-gray-200">
+                        <div class="mb-4">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6195/6195699.png" 
+                                 class="w-16 md:w-20 mx-auto opacity-80" alt="Access Denied">
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-bold text-red-600 mb-2">
+                            Akses Ditolak
+                        </h2>
+                        <p class="text-sm md:text-base text-gray-600 mb-4">
+                            Halaman ini hanya dapat diakses oleh petugas perpustakaan.
+                        </p>
+                        <p class="text-sm md:text-base text-gray-600 mb-6">
+                            Silakan <a href="../login.php" class="text-blue-600 font-semibold hover:underline">
+                                login sebagai petugas
+                            </a> untuk mengakses dashboard.
+                        </p>
+                        <a href="../login.php">
+                            <button class="w-full bg-[#1C77D2] hover:bg-blue-700 text-white py-2.5 md:py-3 rounded-lg font-semibold transition text-sm md:text-base">
+                                Kembali ke Halaman Utama
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
+            <?php endif; ?>
 
         </main>
-    
-   <?php else : ?>
-<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-
-    <div class="bg-white shadow-lg rounded-2xl p-8 max-w-md text-center border border-gray-200">
-
-        <div class="mb-4">
-            <img src="https://cdn-icons-png.flaticon.com/512/6195/6195699.png" 
-                 class="w-20 mx-auto opacity-80" alt="Access Denied Icon">
-        </div>
-
-        <h2 class="text-2xl font-bold text-red-600 mb-2">
-            Akses Ditolak
-        </h2>
-
-        <p class="text-gray-600 mb-4">
-            Halaman ini hanya dapat diakses oleh petugas perpustakaan.
-        </p>
-
-        <p class="text-gray-600 mb-6">
-            Silakan <a href="../login.php" class="text-blue-600 font-semibold hover:underline">
-                login sebagai petugas
-            </a> untuk mengakses dashboard.
-        </p>
-
-        <a href="../login.php">
-            <button 
-                class="w-full bg-[#1C77D2] hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition">
-                Kembali ke Halaman Utama
-            </button>
-        </a>
 
     </div>
-
-</div>
-<?php endif; ?>
 
 </body>
 </html>

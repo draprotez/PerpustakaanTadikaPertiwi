@@ -16,7 +16,6 @@ else if (isset($_SESSION['user_name'])) {
 }
 
 // AMBIL DATA CAROUSEL
-// Hanya ambil data dari tabel 'homepage_books' yang aktif
 $query = "SELECT b.id, b.judul_buku, b.penulis, b.penerbit, b.tahun_terbit, b.gambar, b.kode_buku 
           FROM buku b
           INNER JOIN homepage_books hb ON b.id = hb.buku_id
@@ -33,270 +32,295 @@ if ($result) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perpustakaan Tadika Pertiwi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* CSS SAMA SEPERTI SEBELUMNYA */
-       
-        .welcome-text { text-align: center; margin: 15px 0; color: #666; }
-      
-        .book-section { margin-top: 40px; }
-        .section-title { font-size: 1.8em; color: #333; margin-bottom: 20px; text-align: center; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .carousel-container { position: relative; overflow: hidden; padding: 20px 0;   }
-        .carousel-wrapper { width: 20px; height: 350px; display: flex; transition: transform 0.5s ease; gap: 20px; align-items: stretch; }
-        .book-card { flex: 0 0 220px;  background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        .book-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .book-cover { width: 100%; height: 280px; background: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 2.5em; margin-bottom: 10px; overflow: hidden; }
-        .book-cover img { width: 100%; height: 100%; object-fit: cover; }
-        .book-title { font-weight: bold; color: #333; margin-bottom: 5px; height: 40px; overflow: hidden; font-size: 0.95em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-        .book-author { color: #666; font-size: 0.85em; margin-bottom: 3px; }
-        .book-code { color: #999; font-size: 0.8em; margin-top: auto; }
-        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,140,186,0.8); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; z-index: 10; }
-        .carousel-btn:hover { background: rgba(0,140,186,1); }
-        .carousel-btn.prev { left: 10px; }
-        .carousel-btn.next { right: 10px; }
-        .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.3s; }
-        .dot.active { background: #008CBA; width: 25px; border-radius: 5px; }
-         html {
-        scroll-behavior: smooth;
-    }
-        /* ▼▼▼ CSS BARU UNTUK PESAN KOSONG ▼▼▼ */
-        .empty-carousel {
-            text-align: center;
-            padding: 40px 20px;
-            background-color: #fff;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            color: #777;
-            font-style: italic;
+        .carousel-wrapper { 
+            display: flex; 
+            transition: transform 0.5s ease; 
+            gap: 20px; 
+        }
+        .book-card { 
+            flex: 0 0 220px;
+            scroll-snap-align: start;
+        }
+        @media (max-width: 768px) {
+            .book-card { flex: 0 0 180px; }
+        }
+        .dot { 
+            transition: all 0.3s; 
+        }
+        .dot.active { 
+            background: #008CBA; 
+            width: 25px; 
+            border-radius: 5px; 
         }
     </style>
 </head>
-<body class="scroll-smooth">
-    <div class="kontainer ">
-        <?php if ($isLoggedIn): ?>
-        
-          <div class=" container nav-main flex bg-[#1C77D2] justify-between items-center py-3 text-white">
-            <div class="logo flex items-center gap-3">
-                <img class="rounded-full w-12 " src="assets/images/logo/logo-smk.png" alt="">
-                <p>E-LIBRARY <br> <strong>SMK TADIKA PERTIWI</strong></p>
-            </div>
-           <div class="nav-buttons gap-12 flex font-bold">
-                <a href="#" class="btn-secondary hover:text-yellow-400">Beranda</a>
-                <a href="#about" class="btn-secondary  hover:text-yellow-400">Tentang</a>
-                <a href="#contact" class="btn-secondary  hover:text-yellow-400">Kontak</a>
-                <a href="#organisasi" class="btn-secondary  hover:text-yellow-400">Organisasi</a>
-                <a href="logout.php" class="btn-danger  hover:text-black hover:rounded-lg hover:bg-white px-2">Keluar</a>
-            </div>
-          </div>
-        <?php else: ?>
-            
-             <div class=" container nav-main flex bg-[#1C77D2] justify-between items-center py-3 text-white">
-            <div class="logo flex items-center gap-3">
-                <img class="rounded-full w-12 " src="assets/images/logo/logo-smk.png" alt="">
-                <p>E-LIBRARY <br> <strong>SMK TADIKA PERTIWI</strong></p>
-            </div>
-           <div class="nav-buttons gap-12 flex font-bold">
-                <a href="#" class="btn-secondary hover:text-yellow-400">Beranda</a>
-                <a href="#about" class="btn-secondary  hover:text-yellow-400">Tentang</a>
-                <a href="#contact" class="btn-secondary  hover:text-yellow-400">Kontak</a>
-                <a href="#organisasi" class="btn-secondary  hover:text-yellow-400">Organisasi</a>
-                <a href="login.php" class="btn-danger  hover:text-black hover:rounded-lg hover:bg-white px-2">Masuk</a>
-            </div>
-          </div>
-        <?php endif; ?>
-        <div class="bg-main">
-            <img src="assets/images/logo/main-bg.png" alt="">
-        </div>
-
-        <div class="absolute top-40 ml-[200px] text-4xl font-bold space-y-5 text-white">
-    <p>Halo <?php echo htmlspecialchars($nama_user); ?>👋</p>
-    <p>Siap baca buku</p>
-    <p>hari ini?</p>
-    <a href="views/lihatBukuViews.php">
-       <button class="flex items-center font-semibold text-xl mt-5 bg-white  text-blue-700 rounded-lg py-2 px-4 gap-2 hover:bg-yellow-400">
-    Lihat buku
-    <img src="assets/images/icon/maki_arrow.png" class="w-6" alt="">
-</button>
-
-    </a>
-</div>
-
-
-        <div class="book-section" id="katalog buku">
-            <a href="" class="flex justify-center font-semibold text-xl">Koleksi Buku Pilihan</a>
-
-            <?php if (!empty($books)): ?>
-                <div class="carousel-container pl-[200px]">
-                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">❮</button>
-                    <div class="carousel-wrapper" id="carouselWrapper">
-                        <?php foreach ($books as $book): ?>
-                        
-                        <a href="views/lihatBukuViews.php?id=<?php echo $book['id']; ?>" class="book-card" style="text-decoration: none; color: inherit;">
-                            <div class="book-cover">
-                                <?php if ($book['gambar'] && file_exists('assets/images/buku/' . $book['gambar'])): ?>
-                                    <img src="assets/images/buku/<?php echo htmlspecialchars($book['gambar']); ?>" alt="Cover">
-                                <?php else: ?>
-                                    📚
-                                <?php endif; ?>
-                            </div>
-                            <div class="book-title" title="<?php echo htmlspecialchars($book['judul_buku']); ?>">
-                                <?php echo htmlspecialchars($book['judul_buku']); ?>
-                            </div>
-                            <div class="book-author">Penulis: <?php echo htmlspecialchars($book['penulis']); ?></div>
-                            <div class="book-code"><?php echo htmlspecialchars($book['kode_buku']); ?></div>
-                        </a>
-
-                        <?php endforeach; ?>
+<body class="bg-gray-50">
+    <!-- NAVBAR -->
+    <nav class="bg-[#1C77D2] text-white sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex justify-between items-center py-3">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <img class="rounded-full w-10 h-10 md:w-12 md:h-12" src="assets/images/logo/logo-smk.png" alt="Logo">
+                    <div class="text-xs md:text-sm">
+                        <p class="leading-tight">E-LIBRARY</p>
+                        <p class="font-bold leading-tight">SMK TADIKA PERTIWI</p>
                     </div>
-                    <button class="carousel-btn next" onclick="moveCarousel(1)">❯</button>
                 </div>
-                <div class="carousel-dots" id="carouselDots"></div>
-
-            <?php else: ?>
-                <div class="empty-carousel">
-                    <p>Belum ada koleksi buku pilihan yang ditampilkan.</p>
-                    <?php if ($isLoggedIn): // Opsional: Pesan untuk admin ?>
-                        <small>(Silakan tambahkan buku melalui menu Kelola Carousel di Dashboard)</small>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex gap-6 lg:gap-12 font-bold text-sm lg:text-base">
+                    <a href="#" class="hover:text-yellow-400 transition">Beranda</a>
+                    <a href="#about" class="hover:text-yellow-400 transition">Tentang</a>
+                    <a href="#contact" class="hover:text-yellow-400 transition">Kontak</a>
+                    <a href="#organisasi" class="hover:text-yellow-400 transition">Organisasi</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="logout.php" class="hover:bg-white hover:text-black px-3 py-1 rounded-lg transition">Keluar</a>
+                    <?php else: ?>
+                        <a href="login.php" class="hover:bg-white hover:text-black px-3 py-1 rounded-lg transition">Masuk</a>
                     <?php endif; ?>
                 </div>
-            <?php endif; ?>
-        </div>
-        </div>
 
-   <div id="about" class="bg-[#1C77D2] w-full max-w-[800px] mx-auto p-10 text-white mt-5 mb-5 shadow-lg shadow-blue-200 rounded-lg">
-    <img src="assets/images/logo/logo-smk.png" class="w-20 mx-auto mb-4 " alt="">
-    
-    <h1 class="text-2xl font-bold text-center mb-3">
-        Perpustakaan SMK TADIKA PERTIWI
-    </h1>
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
 
-    <p class="text-center leading-7">
-        Berada di lingkungan SMK Tadika Pertiwi yang beralamat di <br>
-        Jl. Haji Jaera Np.1, Cinere, Depok. Perpustakaan ini terletak di <br>
-        lantai 1 di samping ruang guru. Di perpustakaan ini juga <br>
-        dilengkapi dengan sarana dan prasarana yang memadai guna <br>
-        menunjang kegiatan pembelajaran di sekolah.
-    </p>
-</div>
-
-
-    <div>
-        <h2 class=" font-semibold text-xl my-5 mx-5 flex justify-center ">Berita E-Library</h2>
-      
-        <img src="assets/images/logo//Poster.svg" alt="Berita 1" class="w-[500px] mx-auto">
-        
-       
-    </div>  
-    <p class="text-xl font-semibold justify-center flex mt-5 mb-2">Lokasi Perpustakaan</p>
-
-   <div class="w-full flex justify-center py-10">
-    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-0">
-
-        <!-- MAP -->
-        <div class="w-[300px] h-[300px] relative overflow-hidden shadow justify-center">
-            <iframe 
-                class="w-full h-full"
-                src="https://www.google.com/maps?q=-6.340040503434626,106.78242625327886&hl=es;z=18&output=embed"
-                allowfullscreen=""
-                loading="lazy">
-            </iframe>
-
-            <div class="absolute top-2 left-2 flex items-center gap-2 bg-white/80 backdrop-blur-sm px-0 py-1 shadow text-sm">
-                <img src="assets/images/icon/location-pin.png" class="w-4 h-4" alt="pin">
-                <span class="font-semibold">Lokasi Perpustakaan</span>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <div class="flex flex-col gap-3 font-semibold">
+                    <a href="#" class="hover:text-yellow-400 transition">Beranda</a>
+                    <a href="#about" class="hover:text-yellow-400 transition">Tentang</a>
+                    <a href="#contact" class="hover:text-yellow-400 transition">Kontak</a>
+                    <a href="#organisasi" class="hover:text-yellow-400 transition">Organisasi</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="logout.php" class="bg-white text-blue-700 px-3 py-2 rounded-lg text-center">Keluar</a>
+                    <?php else: ?>
+                        <a href="login.php" class="bg-white text-blue-700 px-3 py-2 rounded-lg text-center">Masuk</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
+    </nav>
 
-        <!-- TEXT -->
-      <div class="p-6 bg-[#d9e4f0] w-[320px] h-[300px]" id="contact">
-    <h2 class="text-xl font-bold mb-3">Perpustakaan SMK Tadika Pertiwi</h2>
-
-    <p class="mb-1">Jl. Haji Jaeran No.1, Cinere, Depok</p>
-
-    <p class="mb-1">Telepon : +62895383578689</p>
-    <p class="mb-1">E-mail : tadika.pertiwi@gmail.com</p>
-    <p class="mb-3">G-mail : info@smktadikapertiiwi</p>
-
-    <p class="mb-2 font-semibold">Ikuti Kami di Media Sosial</p>
-
-    <div class="flex items-center gap-3 text-xl">
-        <a href="https://www.facebook.com/share/14LoiwFZkmv/" class="fa-brands fa-facebook"></a>
-        <a href="https://www.instagram.com/smktadikapertiwi_?igsh=cTV4NHlkc3BtODlm" class="fa-brands fa-instagram"></a>
-        <a href="https://www.youtube.com/@smktadikapertiwi3159" class="fa-brands fa-youtube"></a>
-    </div>
-</div>
-
-
-    </div>
-</div>
-
-<!-- ORGANISASI -->
-<div id="organisasi" > 
-    <p class="text-xl font-semibold justify-center flex mt-5 mb-5">Struktur Organisasi</p>
-   <img src="assets/images/logo/Struktur.png" alt="Struktur Organisasi" class="w-[500px] mx-auto mb-10 shadow-lg shadow-blue-200">
-</div>
-
-        <footer class="bg-[#1F7BD8] text-white py-8 px-6">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
-
-        <!-- LEFT (Logo + Menu) -->
-        <div class="flex flex-col items-start">
-            <img src="assets/images/logo/logo-smk.png" class="w-16 mb-3" alt="logo">
-            <ul class="space-y-1">
-               <a href="index.php"> <li>Beranda</li></a>
-                <a href="#katalog buku"><li>Katalog Buku</li></a>
-                <a href="#about"><li>Tentang Kami</li>
-            </ul></a>
-        </div>
-
-        <!-- MIDDLE (Shortcut Link) -->
-        <div class="flex flex-col items-start mt-12 md:items-center">
-            <h3 class="font-semibold mb-2">Shortcut Link :</h3>
-            <ul class="space-y-1">
-                <a href="https://www.smktadikapertiwi.sch.id/"><li>Website Profile Sekolah</li></a>
-                <li>Website Perpustakaan</li>
-            </ul>
-        </div>
-
-        <!-- RIGHT (Kontak) -->
-        <div class="flex flex-col items-start mt-12 md:items-end">
-            <h3 class="font-semibold mb-2">Kontak :</h3>
-            <ul class="space-y-1">
-                <li>0895383578689</li>
-                <li>tadika.pertiwi@gmail.com</li>
-                <li>info@smktadikapertiwi</li>
-            </ul>
+    <!-- HERO SECTION -->
+    <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+        <img src="assets/images/logo/main-bg.png" alt="Background" class="w-full h-full object-cover">
+        
+        <!-- Overlay Text -->
+        <div class="absolute inset-0 flex items-center px-4 md:px-8 lg:px-16">
+            <div class="text-white max-w-xl">
+                <p class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">Halo <?php echo htmlspecialchars($nama_user); ?>👋</p>
+                <p class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">Siap baca buku</p>
+                <p class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">hari ini?</p>
+                <a href="views/lihatBukuViews.php">
+                    <button class="flex items-center font-semibold text-base md:text-xl bg-white text-blue-700 rounded-lg py-2 px-4 md:py-3 md:px-6 gap-2 hover:bg-yellow-400 transition shadow-lg">
+                        Lihat buku
+                        <img src="assets/images/icon/maki_arrow.png" class="w-5 md:w-6" alt="arrow">
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- COPYRIGHT -->
-    <div class="text-center text-xs mt-6">
-        © 2025 Perpustakaan SMK Tadika Pertiwi. All Rights Reserved.
-    </div>
-</footer>
+    <!-- BOOK CAROUSEL SECTION -->
+    <div class="container mx-auto px-4 md:px-8 py-8 md:py-12" id="katalog-buku">
+        <h2 class="text-xl md:text-2xl lg:text-3xl font-semibold text-center mb-6 md:mb-8">Koleksi Buku Pilihan</h2>
 
+        <?php if (!empty($books)): ?>
+            <div class="relative">
+                <!-- Carousel Container -->
+                <div class="overflow-hidden px-2 md:px-12">
+                    <div class="carousel-wrapper" id="carouselWrapper">
+                        <?php foreach ($books as $book): ?>
+                        <a href="views/lihatBukuViews.php?id=<?php echo $book['id']; ?>" 
+                           class="book-card bg-white rounded-lg shadow-md hover:shadow-xl transition p-4 flex flex-col">
+                            <div class="w-full h-48 md:h-64 bg-gray-100 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
+                                <?php if ($book['gambar'] && file_exists('assets/images/buku/' . $book['gambar'])): ?>
+                                    <img src="assets/images/buku/<?php echo htmlspecialchars($book['gambar']); ?>" 
+                                         alt="Cover" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <span class="text-4xl text-gray-400">📚</span>
+                                <?php endif; ?>
+                            </div>
+                            <h3 class="font-bold text-sm md:text-base text-gray-800 mb-1 line-clamp-2 h-10 md:h-12">
+                                <?php echo htmlspecialchars($book['judul_buku']); ?>
+                            </h3>
+                            <p class="text-xs md:text-sm text-gray-600 mb-1">Penulis: <?php echo htmlspecialchars($book['penulis']); ?></p>
+                            <p class="text-xs text-gray-400 mt-auto"><?php echo htmlspecialchars($book['kode_buku']); ?></p>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button onclick="moveCarousel(-1)" 
+                        class="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 bg-blue-600/80 hover:bg-blue-600 text-white w-10 h-10 rounded-full shadow-lg transition">
+                    ❮
+                </button>
+                <button onclick="moveCarousel(1)" 
+                        class="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 bg-blue-600/80 hover:bg-blue-600 text-white w-10 h-10 rounded-full shadow-lg transition">
+                    ❯
+                </button>
+            </div>
+
+            <!-- Dots Indicator -->
+            <div class="flex justify-center gap-2 mt-6" id="carouselDots"></div>
+
+        <?php else: ?>
+            <div class="text-center py-12 px-4 bg-white border-2 border-dashed border-gray-300 rounded-lg">
+                <p class="text-gray-500 italic">Belum ada koleksi buku pilihan yang ditampilkan.</p>
+                <?php if ($isLoggedIn): ?>
+                    <small class="text-gray-400">(Silakan tambahkan buku melalui menu Kelola Carousel di Dashboard)</small>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- ABOUT SECTION -->
+    <div id="about" class="container mx-auto px-4 md:px-8 py-8">
+        <div class="bg-[#1C77D2] max-w-4xl mx-auto p-6 md:p-10 text-white rounded-lg shadow-lg">
+            <img src="assets/images/logo/logo-smk.png" class="w-16 md:w-20 mx-auto mb-4" alt="Logo">
+            
+            <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-4">
+                Perpustakaan SMK TADIKA PERTIWI
+            </h2>
+
+            <p class="text-sm md:text-base text-center leading-relaxed">
+                Berada di lingkungan SMK Tadika Pertiwi yang beralamat di
+                Jl. Haji Jaera Np.1, Cinere, Depok. Perpustakaan ini terletak di
+                lantai 1 di samping ruang guru. Di perpustakaan ini juga
+                dilengkapi dengan sarana dan prasarana yang memadai guna
+                menunjang kegiatan pembelajaran di sekolah.
+            </p>
+        </div>
+    </div>
+
+    <!-- NEWS SECTION -->
+    <div class="container mx-auto px-4 md:px-8 py-8">
+        <h2 class="text-xl md:text-2xl lg:text-3xl font-semibold text-center mb-6">Berita E-Library</h2>
+        <img src="assets/images/logo/Poster.svg" alt="Berita" class="w-full max-w-lg md:max-w-xl mx-auto rounded-lg shadow-lg">
+    </div>
+
+    <!-- LOCATION & CONTACT SECTION -->
+    <div class="container mx-auto px-4 md:px-8 py-8">
+        <h2 class="text-xl md:text-2xl lg:text-3xl font-semibold text-center mb-6">Lokasi Perpustakaan</h2>
+        
+        <div class="flex flex-col md:flex-row justify-center items-stretch gap-0 max-w-3xl mx-auto">
+            <!-- Map -->
+            <div class="w-full md:w-1/2 h-64 md:h-80 relative overflow-hidden shadow-lg">
+                <iframe 
+                    class="w-full h-full"
+                    src="https://www.google.com/maps?q=-6.340040503434626,106.78242625327886&hl=es;z=18&output=embed"
+                    allowfullscreen=""
+                    loading="lazy">
+                </iframe>
+                <div class="absolute top-2 left-2 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-2 rounded shadow text-xs md:text-sm">
+                    <img src="assets/images/icon/location-pin.png" class="w-4 h-4" alt="pin">
+                    <span class="font-semibold">Lokasi Perpustakaan</span>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div id="contact" class="w-full md:w-1/2 p-6 bg-[#d9e4f0] h-64 md:h-80 overflow-y-auto">
+                <h3 class="text-lg md:text-xl font-bold mb-3">Perpustakaan SMK Tadika Pertiwi</h3>
+                <p class="text-sm mb-2">Jl. Haji Jaeran No.1, Cinere, Depok</p>
+                <p class="text-sm mb-2">Telepon: +62895383578689</p>
+                <p class="text-sm mb-2">E-mail: tadika.pertiwi@gmail.com</p>
+                <p class="text-sm mb-4">G-mail: info@smktadikapertiwi</p>
+                
+                <p class="text-sm font-semibold mb-2">Ikuti Kami di Media Sosial</p>
+                <div class="flex items-center gap-4 text-xl md:text-2xl">
+                    <a href="https://www.facebook.com/share/14LoiwFZkmv/" class="hover:text-blue-600 transition">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="https://www.instagram.com/smktadikapertiwi_?igsh=cTV4NHlkc3BtODlm" class="hover:text-pink-600 transition">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@smktadikapertiwi3159" class="hover:text-red-600 transition">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORGANIZATION STRUCTURE -->
+    <div id="organisasi" class="container mx-auto px-4 md:px-8 py-8">
+        <h2 class="text-xl md:text-2xl lg:text-3xl font-semibold text-center mb-6">Struktur Organisasi</h2>
+        <img src="assets/images/logo/Struktur.png" alt="Struktur Organisasi" 
+             class="w-full max-w-2xl mx-auto rounded-lg shadow-lg">
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#1F7BD8] text-white py-8 px-4 md:px-8 mt-12">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                <!-- Left -->
+                <div>
+                    <img src="assets/images/logo/logo-smk.png" class="w-16 mb-4" alt="logo">
+                    <ul class="space-y-2">
+                        <li><a href="index.php" class="hover:text-yellow-400 transition">Beranda</a></li>
+                        <li><a href="#katalog-buku" class="hover:text-yellow-400 transition">Katalog Buku</a></li>
+                        <li><a href="#about" class="hover:text-yellow-400 transition">Tentang Kami</a></li>
+                    </ul>
+                </div>
+
+                <!-- Middle -->
+                <div class="md:text-center">
+                    <h3 class="font-semibold mb-3">Shortcut Link:</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://www.smktadikapertiwi.sch.id/" class="hover:text-yellow-400 transition">Website Profile Sekolah</a></li>
+                        <li>Website Perpustakaan</li>
+                    </ul>
+                </div>
+
+                <!-- Right -->
+                <div class="md:text-right">
+                    <h3 class="font-semibold mb-3">Kontak:</h3>
+                    <ul class="space-y-2">
+                        <li>0895383578689</li>
+                        <li>tadika.pertiwi@gmail.com</li>
+                        <li>info@smktadikapertiwi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center text-xs mt-8 pt-6 border-t border-white/20">
+                © 2025 Perpustakaan SMK Tadika Pertiwi. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
 
     <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Carousel Logic
         let currentIndex = 0;
         const carouselWrapper = document.getElementById('carouselWrapper');
         
-        // Cek jika wrapper ada (karena jika kosong, wrapper tidak dirender)
         if (carouselWrapper) {
             const cards = document.querySelectorAll('.book-card');
             const totalCards = cards.length;
             
             function getCardsPerView() {
-                if (window.innerWidth < 600) return 1;
-                if (window.innerWidth < 900) return 2;
-                if (window.innerWidth < 1200) return 3;
+                if (window.innerWidth < 640) return 1;
+                if (window.innerWidth < 768) return 2;
+                if (window.innerWidth < 1024) return 3;
                 return 4;
             }
 
@@ -304,16 +328,20 @@ if ($result) {
             let maxIndex = Math.max(0, totalCards - cardsPerView);
 
             const dotsContainer = document.getElementById('carouselDots');
-            dotsContainer.innerHTML = '';
-
-            const totalPages = Math.ceil(totalCards / cardsPerView);
             
-            for (let i = 0; i < totalPages; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot' + (i === 0 ? ' active' : '');
-                dot.onclick = () => goToSlide(i * cardsPerView); 
-                dotsContainer.appendChild(dot);
+            function createDots() {
+                dotsContainer.innerHTML = '';
+                const totalPages = Math.ceil(totalCards / cardsPerView);
+                
+                for (let i = 0; i < totalPages; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'w-2.5 h-2.5 rounded-full bg-gray-300 cursor-pointer dot' + (i === 0 ? ' active' : '');
+                    dot.onclick = () => goToSlide(i * cardsPerView);
+                    dotsContainer.appendChild(dot);
+                }
             }
+
+            createDots();
 
             function updateCarousel() {
                 const cardWidth = cards[0].offsetWidth;
@@ -340,11 +368,11 @@ if ($result) {
             function goToSlide(index) {
                 cardsPerView = getCardsPerView();
                 maxIndex = Math.max(0, totalCards - cardsPerView);
-                currentIndex = index;
-                if (currentIndex > maxIndex) currentIndex = maxIndex;
+                currentIndex = Math.min(index, maxIndex);
                 updateCarousel();
             }
 
+            // Auto-play
             let autoplayInterval = setInterval(() => moveCarousel(1), 5000);
             carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
             carouselWrapper.addEventListener('mouseleave', () => {
@@ -352,17 +380,11 @@ if ($result) {
                 autoplayInterval = setInterval(() => moveCarousel(1), 5000);
             });
             
+            // Responsive handler
             window.addEventListener('resize', () => {
                 cardsPerView = getCardsPerView();
                 maxIndex = Math.max(0, totalCards - cardsPerView);
-                dotsContainer.innerHTML = '';
-                const totalPages = Math.ceil(totalCards / cardsPerView);
-                for (let i = 0; i < totalPages; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'dot' + (i === Math.floor(currentIndex / cardsPerView) ? ' active' : '');
-                    dot.onclick = () => goToSlide(i * cardsPerView);
-                    dotsContainer.appendChild(dot);
-                }
+                createDots();
                 updateCarousel();
             });
         }

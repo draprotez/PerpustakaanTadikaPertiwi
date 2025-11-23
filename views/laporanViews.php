@@ -50,18 +50,21 @@ $statusParam = $status ? '&status=' . htmlspecialchars($status) : '';
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
         .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
-        
+        td {
+    background-color: white !important;
+}
+
         /* Style untuk status */
         .status-returned { color: green; font-weight: bold; }
         .status-borrowed { color: orange; font-weight: bold; }
         .status-overdue { color: red; font-weight: bold; }
     </style>
 </head>
-<body class="ml-[320px]">
+<body class="ml-[320px]  bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <p class="font-semibold text-xl my-5">Laporan Peminjaman Buku</p>
+    <p class="font-semibold text-xl my-5 mt-2  bg-white rounded-xl shadow-md py-4 md:p-6">Laporan Peminjaman Buku</p>
 
     <div class="filter-form">
         <form action="laporanViews.php" method="GET">

@@ -48,7 +48,7 @@ if (!$user_data) {
 <body class="ml-[320px] bg-[#EDF0F7] ">
 
     <?php include 'partials/sidebar.php'; ?>
- <p class="my-5 font-semibold text-xl">Pengaturan Profile</p>
+ <p class="my-5 font-semibold text-xl mt-2  bg-white rounded-xl shadow-md py-4 md:p-6">Pengaturan Profile</p>
     <div class="form-container">
         <h2>Edit Profil Saya</h2>
 

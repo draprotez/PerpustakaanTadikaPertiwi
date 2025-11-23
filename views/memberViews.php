@@ -34,6 +34,9 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        td {
+    background-color: white !important;
+}
         th { background-color: #f2f2f2; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
         .modal-content { background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; width: 400px; max-height: 80vh; overflow-y: auto; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
@@ -52,7 +55,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <p class="font-semibold text-xl py-5">Kelola Data Anggota (Siswa & Guru)</p>
+    <p class="font-semibold text-xl py-5 mt-2  bg-white rounded-xl shadow-md mb-3 md:p-6">Kelola Data Anggota (Siswa & Guru)</p>
 
 
 
@@ -113,7 +116,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
                 <th class="bg-[#73A7DB]">Username (Email)</th>
                 <th class="bg-[#73A7DB]">Tipe</th>
                 <th class="bg-[#73A7DB]">Nomor Induk</th> 
-                <th class="bg-[#73A7DB]">Kelas/Mapel</th>
+                <th class="bg-[#73A7DB]">Kelas</th>
                 <th class="bg-[#73A7DB]">Status</th>
                 <th class="bg-[#73A7DB]">Aksi</th>
             </tr>

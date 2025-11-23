@@ -45,7 +45,9 @@ $buku_list_available = getAllAvailableBuku($conn);
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
         .button-group { margin-top: 20px; text-align: right; }
        
-        
+        td {
+    background-color: white !important;
+    }
         .pagination { margin-top: 20px; text-align: center; }
         .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
         .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
@@ -56,7 +58,7 @@ $buku_list_available = getAllAvailableBuku($conn);
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <p class="font-semibold text-xl py-5">Kelola Peminjaman Buku</p>
+    <p class="font-semibold text-xl py-5 mt-2  bg-white rounded-xl shadow-md mb-3 md:p-6">Kelola Peminjaman Buku</p>
 
    
 
