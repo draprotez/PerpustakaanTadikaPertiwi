@@ -114,9 +114,9 @@ $error = $_GET['error'] ?? '';
                             <tr>
                                 <th class="bg-[#73A7DB]">Urutan</th>
                                 <th class="bg-[#73A7DB]">Cover</th>
-                                <th class="bg-[#73A7DB]">Judul Buku</th>
+                                <th class="bg-[#73A7DB] ">Judul Buku</th>
                                 <th class="bg-[#73A7DB]">Penulis</th>
-                                <th class="bg-[#73A7DB]">Kode Buku</th>
+                                <th class="bg-[#73A7DB] w-[150px]">Kode Buku</th>
                                 <th class="bg-[#73A7DB] w-[180px]">Status</th>
                                 <th class="bg-[#73A7DB]">Aksi</th>
                             </tr>
@@ -155,7 +155,7 @@ $error = $_GET['error'] ?? '';
                                             </a>
 
                                             <a href="../controller/carouselController.php?action=remove&id=<?php echo $book['id']; ?>"
-                                               class="inline-flex items-center gap-2 py-1 pr-5 pl-2 rounded-full bg-red-500 font-semibold"
+                                               class="inline-flex items-center gap-2 py-1 pr-5 pl-2 rounded-full bg-red-500 font-semibold w-[115px]"
                                                onclick="return confirm('Yakin ingin menghapus buku ini dari dashboard?')">
                                                 <img src="../assets/images/icon/mi_delete.png" alt="Hapus" style="width:16px;height:16px;" />
                                                 <span>Delete</span>

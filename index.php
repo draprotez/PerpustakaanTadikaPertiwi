@@ -104,9 +104,9 @@ if ($result) {
                     <a href="#contact" class="hover:text-yellow-400 transition">Kontak</a>
                     <a href="#organisasi" class="hover:text-yellow-400 transition">Organisasi</a>
                     <?php if ($isLoggedIn): ?>
-                        <a href="logout.php" class="bg-white text-blue-700 px-3 py-2 rounded-lg text-center">Keluar</a>
+                        <a href="logout.php" >Keluar</a>
                     <?php else: ?>
-                        <a href="login.php" class="bg-white text-blue-700 px-3 py-2 rounded-lg text-center">Masuk</a>
+                        <a href="login.php" >Masuk</a>
                     <?php endif; ?>
                 </div>
             </div>
