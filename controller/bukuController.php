@@ -16,11 +16,26 @@ function handleImageUpload($fileInput, $existingImage = null) {
         $new_filename = 'cover_' . uniqid() . '.' . $imageFileType;
         $target_file = $target_dir . $new_filename;
 
-        $check = getimagesize($fileInput["tmp_name"]);
-        if ($check === false) return (object)['error' => "File bukan gambar."];
-        if ($fileInput["size"] > 2000000) return (object)['error' => "Ukuran file terlalu besar (Max 2MB)."];
-        if (!in_array($imageFileType, ["jpg", "png", "jpeg", "svg"])) return (object)['error' => "Hanya format JPG, JPEG, PNG, & SVG."];
+        // 1. Cek Ekstensi dulu
+        if (!in_array($imageFileType, ["jpg", "png", "jpeg", "svg"])) {
+            return (object)['error' => "Hanya format JPG, JPEG, PNG, & SVG."];
+        }
 
+        // 2. Cek getimagesize HANYA jika bukan SVG
+        // (Karena getimagesize sering gagal membaca file SVG yang valid)
+        if ($imageFileType != "svg") {
+            $check = getimagesize($fileInput["tmp_name"]);
+            if ($check === false) {
+                return (object)['error' => "File bukan gambar valid."];
+            }
+        }
+
+        // 3. Cek Ukuran (2MB)
+        if ($fileInput["size"] > 2000000) {
+            return (object)['error' => "Ukuran file terlalu besar (Max 2MB)."];
+        }
+
+        // 4. Upload File
         if (move_uploaded_file($fileInput["tmp_name"], $target_file)) {
             if ($existingImage && file_exists($target_dir . $existingImage)) {
                 unlink($target_dir . $existingImage);
