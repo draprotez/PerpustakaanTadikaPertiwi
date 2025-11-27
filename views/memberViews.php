@@ -68,7 +68,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         id="search" 
         name="search" 
         value="<?php echo htmlspecialchars($search); ?>" 
-        placeholder="Cari peminjaman"
+        placeholder="Cari Anggota"
         class="rounded-full pr-10"
         style="padding:5px; padding-right:34px; border:1px solid #ccc;"
     >

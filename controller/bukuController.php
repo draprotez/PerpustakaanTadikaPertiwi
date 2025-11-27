@@ -30,9 +30,9 @@ function handleImageUpload($fileInput, $existingImage = null) {
             }
         }
 
-        // 3. Cek Ukuran (2MB)
-        if ($fileInput["size"] > 2000000) {
-            return (object)['error' => "Ukuran file terlalu besar (Max 2MB)."];
+        // 3. Cek Ukuran (20MB)
+        if ($fileInput["size"] > 20000000) {
+            return (object)['error' => "Ukuran file terlalu besar (Max 20MB)."];
         }
 
         // 4. Upload File

@@ -84,9 +84,9 @@ if ($result) {
                     <a href="#contact" class="hover:text-yellow-400 transition">Kontak</a>
                     <a href="#organisasi" class="hover:text-yellow-400 transition">Organisasi</a>
                     <?php if ($isLoggedIn): ?>
-                        <a href="logout.php" class="hover:bg-white hover:text-black px-3 py-1 rounded-lg transition">Keluar</a>
+                        <a href="logout.php" class="hover:text-yellow-400 transition">Keluar</a>
                     <?php else: ?>
-                        <a href="login.php" class="hover:bg-white hover:text-black px-3 py-1 rounded-lg transition">Masuk</a>
+                        <a href="login.php" class="hover:text-yellow-400 transition">Masuk</a>
                     <?php endif; ?>
                 </div>
 

@@ -73,7 +73,15 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
         
         <label for="search"  >Cari (Judul, Kode, Penulis, Penerbit):</label><br>
         <div class="relative inline-block py-3 mr-2" style="vertical-align: middle;">
-            <input type="text" class="rounded-full pr-10" style="padding:5px; padding-right:34px; border:1px solid #ccc;" id="search" name="search" placeholder="Cari buku" value="<?php echo htmlspecialchars($search); ?>">
+        <input 
+        type="text" 
+        id="search" 
+        name="search" 
+        value="<?php echo htmlspecialchars($search); ?>" 
+        placeholder="Cari peminjaman"
+        class="rounded-full pr-10"
+        style="padding:5px; padding-right:34px; border:1px solid #ccc;"
+    >
             <img src="../assets/images/icon/mingcute_search-line (1).png" alt="" aria-hidden="true" class="absolute right-2 top-1/2" style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;" />
         </div>
         <div class="inline-flex items-center gap-3" style="vertical-align: middle;">

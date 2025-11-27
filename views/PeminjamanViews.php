@@ -90,7 +90,7 @@ $buku_list_available = getAllAvailableBuku($conn);
     class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
     onclick="openForm('createForm')">
 
-    <p class="leading-none ">Buat Peminjaman Baru</p>
+    <p class="leading-none pt-1">Buat Peminjaman Baru</p>
 
     <img src="../assets/images/icon/mdi_add-bold.png"
          alt="Tambah"
