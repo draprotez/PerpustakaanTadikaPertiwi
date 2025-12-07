@@ -1,19 +1,33 @@
 <?php
-//bukuModels.php
+// models/bukuModels.php
+
+// ▼▼▼ FUNGSI BARU: Ambil semua kategori untuk dropdown ▼▼▼
+function getAllKategori($conn) {
+    $sql = "SELECT * FROM kategori ORDER BY nama ASC";
+    $result = $conn->query($sql);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+// ▲▲▲ AKHIR FUNGSI BARU ▲▲▲
 
 function getAllBuku($conn, $search = null, $limit, $offset) {
-    $sql = "SELECT id, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kode_buku, kelas, kurikulum FROM buku";
+    // Tambahkan kategori_id dan join ke tabel kategori untuk ambil nama kategori
+    $sql = "SELECT b.*, k.nama as nama_kategori 
+            FROM buku b
+            LEFT JOIN kategori k ON b.kategori_id = k.id";
+            
     $searchTerm = "%" . $search . "%";
     
     if ($search) {
-        $sql .= " WHERE (judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?)";
+        // Tambahkan pencarian kategori
+        $sql .= " WHERE (b.judul_buku LIKE ? OR b.kode_buku LIKE ? OR b.penulis LIKE ? OR b.penerbit LIKE ? OR k.nama LIKE ?)";
     }
     
-    $sql .= " ORDER BY judul_buku ASC LIMIT ? OFFSET ?";
+    $sql .= " ORDER BY b.judul_buku ASC LIMIT ? OFFSET ?";
     $stmt = $conn->prepare($sql);
     
     if ($search) {
-        $stmt->bind_param("ssssii", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
+        // sssssii (5 string pencarian + 2 integer limit/offset)
+        $stmt->bind_param("sssssii", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
     } else {
         $stmt->bind_param("ii", $limit, $offset);
     }
@@ -24,17 +38,17 @@ function getAllBuku($conn, $search = null, $limit, $offset) {
 }
 
 function countAllBuku($conn, $search = null) {
-    $sql = "SELECT COUNT(*) as total FROM buku";
+    $sql = "SELECT COUNT(*) as total FROM buku b LEFT JOIN kategori k ON b.kategori_id = k.id";
     $searchTerm = "%" . $search . "%";
     
     if ($search) {
-        $sql .= " WHERE (judul_buku LIKE ? OR kode_buku LIKE ? OR penulis LIKE ? OR penerbit LIKE ?)";
+        $sql .= " WHERE (b.judul_buku LIKE ? OR b.kode_buku LIKE ? OR b.penulis LIKE ? OR b.penerbit LIKE ? OR k.nama LIKE ?)";
     }
     
     $stmt = $conn->prepare($sql);
     
     if ($search) {
-        $stmt->bind_param("ssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+        $stmt->bind_param("sssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
     }
     
     $stmt->execute();
@@ -52,14 +66,16 @@ function getBukuById($conn, $id) {
 }
 
 function insertBuku($conn, $data) {
+    // Tambahkan kategori_id
     $sql = "INSERT INTO buku 
-                (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kelas, kurikulum) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (kode_buku, judul_buku, penulis, isbn, penerbit, tahun_terbit, total_copy, salinan_tersedia, gambar, kelas, kurikulum, kategori_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     $salinan_tersedia = $data['total_copy']; 
 
-    $stmt->bind_param("ssssssiisss", 
+    // Tambah tipe data 'i' di akhir untuk kategori_id
+    $stmt->bind_param("ssssssissssi", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
@@ -70,13 +86,15 @@ function insertBuku($conn, $data) {
         $salinan_tersedia,       
         $data['gambar'],
         $data['kelas'],
-        $data['kurikulum']
+        $data['kurikulum'],
+        $data['kategori_id'] // <-- Ditambahkan
     );
     
     return $stmt->execute();
 }
 
 function updateBuku($conn, $data) {
+    // Tambahkan kategori_id
     $sql = "UPDATE buku SET 
                 kode_buku = ?, 
                 judul_buku = ?, 
@@ -88,11 +106,13 @@ function updateBuku($conn, $data) {
                 salinan_tersedia = ?, 
                 gambar = ?,
                 kelas = ?,
-                kurikulum = ?
+                kurikulum = ?,
+                kategori_id = ?
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
     
-    $stmt->bind_param("ssssssiisssi", 
+    // Tambah tipe data 'i' sebelum id
+    $stmt->bind_param("ssssssissssii", 
         $data['kode_buku'], 
         $data['judul_buku'], 
         $data['penulis'],
@@ -104,7 +124,8 @@ function updateBuku($conn, $data) {
         $data['gambar'],
         $data['kelas'],
         $data['kurikulum'],
-        $data['id']              
+        $data['kategori_id'], // <-- Ditambahkan
+        $data['id']
     );
     
     return $stmt->execute();

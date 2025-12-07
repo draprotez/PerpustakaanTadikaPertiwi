@@ -68,6 +68,7 @@ switch ($action) {
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'kelas' => $_POST['kelas'],
                 'kurikulum' => $_POST['kurikulum'],
+                'kategori_id' => $_POST['kategori_id'] ?: NULL, // <-- DITAMBAHKAN
                 'total_copy' => $_POST['total_copy'],
                 'gambar' => $uploadResult->filename
             ];
@@ -101,6 +102,7 @@ switch ($action) {
                 'tahun_terbit' => $_POST['tahun_terbit'],
                 'kelas' => $_POST['kelas'],
                 'kurikulum' => $_POST['kurikulum'],
+                'kategori_id' => $_POST['kategori_id'] ?: NULL, // <-- DITAMBAHKAN
                 'total_copy' => $_POST['total_copy'],
                 'salinan_tersedia' => $_POST['salinan_tersedia'],
                 'gambar' => $uploadResult->filename

@@ -1,5 +1,5 @@
 <?php
-// loginController.php
+// controller/loginController.php
 session_start();
 require_once('../config/database.php');
 
@@ -15,9 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-
         if ($login_as === 'member') {
-            $sql = "SELECT id, password, name, type, status FROM members WHERE nisn = ? OR nuptk = ?";
+            // Query mencari berdasarkan NISN ATAU Kode Guru
+            // (Sesuai dengan perubahan database)
+            $sql = "SELECT id, password, name, type, status FROM members WHERE nisn = ? OR kode_guru = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ss", $username_input, $username_input);
             $stmt->execute();
@@ -34,10 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         exit();
                     }
 
+                    // Set Session Member
                     $_SESSION['member_id'] = $member['id'];
                     $_SESSION['member_name'] = $member['name'];
                     $_SESSION['member_type'] = $member['type'];
                     
+                    // Update Last Login
                     $stmt_update = $conn->prepare("UPDATE members SET last_login = NOW() WHERE id = ?");
                     $stmt_update->bind_param("i", $member['id']);
                     $stmt_update->execute();
@@ -47,14 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
 
                 } else {
-                    $_SESSION['error'] = "NISN/NUPTK atau password salah.";
+                    $_SESSION['error'] = "ID atau password salah.";
                 }
             } else {
-                $_SESSION['error'] = "NISN/NUPTK atau password salah.";
+                $_SESSION['error'] = "ID atau password salah.";
             }
 
         } else if ($login_as === 'user') {
-
+            // Login Admin (Tidak berubah)
             $sql = "SELECT id, password, name, role FROM user WHERE username = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $username_input);
@@ -90,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
     } catch (Exception $e) {
-        $_SESSION['error'] = "Terjadi kesalahan server: " . $e->getMessage();
+        $_SESSION['error'] = "Terjadi kesalahan sistem.";
     }
 
     header("Location: ../login.php");
