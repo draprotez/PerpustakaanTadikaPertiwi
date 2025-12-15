@@ -32,6 +32,7 @@ $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Data Buku</title>
+    <link rel="website icon" type="png" href="../assets/images/logo/logo-smk.png" />
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; } 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; } 

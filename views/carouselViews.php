@@ -26,6 +26,7 @@ $error = $_GET['error'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Buku Dashboard</title>
+    <link rel="website icon" type="png" href="../assets/images/logo/logo-smk.png" />
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }

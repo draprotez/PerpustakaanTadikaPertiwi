@@ -48,6 +48,7 @@ if ($result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Koleksi Buku - Perpustakaan Tadika Pertiwi</title>
+    <link rel="website icon" type="png" href="../assets/images/logo/logo-smk.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>

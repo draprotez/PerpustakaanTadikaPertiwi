@@ -10,16 +10,20 @@ include '../config/database.php';
 include '../models/peminjamanModels.php';
 include '../header.php';
 
+// --- LOGIKA PAGINATION ---
 $search = $_GET['search'] ?? ''; 
-$limit = 10; 
+$limit = 10; // Jumlah data per halaman
 $totalResults = countAllPeminjamanAktif($conn, $search);
 $totalPages = ceil($totalResults / $limit);
 $page = (int)($_GET['page'] ?? 1);
+
+// Validasi halaman agar tidak kurang dari 1 atau lebih dari total
 if ($page < 1) {
     $page = 1;
 } elseif ($page > $totalPages && $totalPages > 0) {
     $page = $totalPages;
 }
+
 $offset = ($page - 1) * $limit;
 $peminjaman_list = getAllPeminjamanAktif($conn, $search, $limit, $offset);
 $searchParam = $search ? '&search=' . htmlspecialchars($search) : '';
@@ -33,6 +37,7 @@ $buku_list_available = getAllAvailableBuku($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Peminjaman Buku</title>
+    <link rel="website icon" type="png" href="../assets/images/logo/logo-smk.png" />
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -45,57 +50,72 @@ $buku_list_available = getAllAvailableBuku($conn);
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 3px; }
         .button-group { margin-top: 20px; text-align: right; }
        
-        td {
-    background-color: white !important;
-    }
+        td { background-color: white !important; }
+        
+        /* STYLE PAGINATION DIPERBAIKI */
         .pagination { margin-top: 20px; text-align: center; }
-        .pagination a, .pagination span { display: inline-block; padding: 8px 12px; margin: 0 2px; border: 1px solid #ddd; text-decoration: none; color: #008CBA; }
-        .pagination span.current { background-color: #008CBA; color: white; border-color: #008CBA; }
-        .pagination a.disabled { color: #999; pointer-events: none; background-color: #f5f5f5; }
+        .pagination a, .pagination span { 
+            display: inline-block; 
+            padding: 8px 12px; 
+            margin: 0 2px; 
+            border: 1px solid #ddd; 
+            text-decoration: none; 
+            color: #008CBA; 
+            border-radius: 4px; /* Sedikit rounded agar rapi */
+        }
+        /* Style untuk halaman aktif */
+        .pagination span.current { 
+            background-color: #008CBA; 
+            color: white; 
+            border-color: #008CBA; 
+            font-weight: bold;
+        }
+        /* Style hover */
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination a.disabled { 
+            color: #999; 
+            pointer-events: none; 
+            background-color: #f5f5f5; 
+            border-color: #ddd;
+        }
     </style>
 </head>
 <body class="ml-[320px] bg-[#EDF0F7]">
 
     <?php include 'partials/sidebar.php'; ?>
 
-    <p class="font-semibold text-xl py-5 mt-2  bg-white rounded-xl shadow-md mb-3 md:p-6">Kelola Peminjaman Buku</p>
+    <p class="font-semibold text-xl py-5 mt-2 bg-white rounded-xl shadow-md mb-3 md:p-6">Kelola Peminjaman Buku</p>
 
-   
-
-   
     <form action="peminjamanViews.php" method="GET">
         <label for="search">Cari (Nama Peminjam, Judul Buku, Kode Member):</label> <br>
-      <div class="mx-2 relative inline-block py-3" style="vertical-align: middle;">
-    <input 
-        type="text" 
-        id="search" 
-        name="search" 
-        value="<?php echo htmlspecialchars($search); ?>" 
-        placeholder="Cari peminjaman"
-        class="rounded-full pr-10"
-        style="padding:5px; padding-right:34px; border:1px solid #ccc;"
-    >
+        <div class="mx-2 relative inline-block py-3" style="vertical-align: middle;">
+            <input 
+                type="text" 
+                id="search" 
+                name="search" 
+                value="<?php echo htmlspecialchars($search); ?>" 
+                placeholder="Cari peminjaman"
+                class="rounded-full pr-10"
+                style="padding:5px; padding-right:34px; border:1px solid #ccc;"
+            >
+            <img 
+                src="../assets/images/icon/mingcute_search-line (1).png" 
+                alt="" 
+                aria-hidden="true" 
+                class="absolute right-2 top-1/2" 
+                style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;"
+            />
+        </div>
 
-    <img 
-        src="../assets/images/icon/mingcute_search-line (1).png" 
-        alt="" 
-        aria-hidden="true" 
-        class="absolute right-2 top-1/2" 
-        style="transform: translateY(-50%); width:16px; height:16px; pointer-events: none; opacity:0.8;"
-    />
-</div>
-
-        <a href="peminjamanViews.php"class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold mx-2">Hapus Filter</a>
+        <a href="peminjamanViews.php" class="px-3 bg-red-500 py-3 rounded-3xl text-white font-semibold mx-2">Hapus Filter</a>
         <button type="button"
-    class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
-    onclick="openForm('createForm')">
-
-    <p class="leading-none pt-1">Buat Peminjaman Baru</p>
-
-    <img src="../assets/images/icon/mdi_add-bold.png"
-         alt="Tambah"
-         class="w-4 h-4 ml-2">
-</button>
+            class="btn-tambah font-semibold inline-flex items-center py-3 px-3 rounded-full bg-[#05AC48] text-white"
+            onclick="openForm('createForm')">
+            <p class="leading-none pt-1">Buat Peminjaman Baru</p>
+            <img src="../assets/images/icon/mdi_add-bold.png" alt="Tambah" class="w-4 h-4 ml-2">
+        </button>
     </form>
     <hr>
     
@@ -155,17 +175,27 @@ $buku_list_available = getAllAvailableBuku($conn);
 
     <div class="pagination">
         <?php if ($totalPages > 1): ?>
-            <a href="?page=<?php echo $page - 1; ?><?php echo $searchParam; ?>"
+            
+            <a href="?page=<?php echo max(1, $page - 1); ?><?php echo $searchParam; ?>"
                class="<?php echo ($page <= 1) ? 'disabled' : ''; ?>">
                 &laquo; Previous
             </a>
-            <span class="current">
-                Halaman <?php echo $page; ?> dari <?php echo $totalPages; ?>
-            </span>
-            <a href="?page=<?php echo $page + 1; ?><?php echo $searchParam; ?>"
+
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <?php if ($i == $page): ?>
+                    <span class="current"><?php echo $i; ?></span>
+                <?php else: ?>
+                    <a href="?page=<?php echo $i; ?><?php echo $searchParam; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <a href="?page=<?php echo min($totalPages, $page + 1); ?><?php echo $searchParam; ?>"
                class="<?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
                 Next &raquo;
             </a>
+
         <?php endif; ?>
     </div>
     <br>

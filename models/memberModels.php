@@ -1,12 +1,13 @@
 <?php
-//memberModels.php
+// models/memberModels.php
 
 function countAllMembers($conn, $search = null) {
     $sql = "SELECT COUNT(*) as total FROM members";
     $searchTerm = "%" . $search . "%";
 
     if ($search) {
-        $sql .= " WHERE (name LIKE ? OR kode_member LIKE ? OR username LIKE ? OR nisn LIKE ? OR nuptk LIKE ?)";
+        // Ganti nuptk dengan kode_guru
+        $sql .= " WHERE (name LIKE ? OR kode_member LIKE ? OR username LIKE ? OR nisn LIKE ? OR kode_guru LIKE ?)";
     }
     
     $stmt = $conn->prepare($sql);
@@ -20,13 +21,14 @@ function countAllMembers($conn, $search = null) {
 }
 
 function getAllMembers($conn, $search = null, $limit, $offset) {
-    $sql = "SELECT id, kode_member, name, username, type, kelas, keterangan, status, nisn, nis, nuptk, nip 
+    // HAPUS kolom lama, ganti nuptk jadi kode_guru
+    $sql = "SELECT id, kode_member, name, username, type, status, nisn, kode_guru 
             FROM members";
     
     $searchTerm = "%" . $search . "%";
 
     if ($search) {
-        $sql .= " WHERE (name LIKE ? OR kode_member LIKE ? OR username LIKE ? OR nisn LIKE ? OR nuptk LIKE ?)";
+        $sql .= " WHERE (name LIKE ? OR kode_member LIKE ? OR username LIKE ? OR nisn LIKE ? OR kode_guru LIKE ?)";
     }
     
     $sql .= " ORDER BY name ASC LIMIT ? OFFSET ?";
@@ -53,68 +55,64 @@ function getMemberById($conn, $id) {
 }
 
 function insertMember($conn, $data) {
+    // Sesuaikan kolom insert dengan database baru
     $sql = "INSERT INTO members 
-                (kode_member, username, password, name, type, nisn, nis, nuptk, nip, kelas, keterangan, status, registrasi) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())";
+                (kode_member, username, password, name, type, nisn, kode_guru, status, registrasi) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURDATE())";
     $stmt = $conn->prepare($sql);
     
     $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
     
-    $prefix = 'TP-';
+    // Generate Kode Member
+    $prefix = ($data['type'] == 'guru') ? 'TP-' : 'S-';
     $kode_member = $prefix . strtoupper(uniqid());
 
-    $keterangan = ($data['type'] == 'guru') ? $data['keterangan'] : null;
+    // Siapkan parameter (nisn null jika guru, kode_guru null jika siswa)
+    $nisn = ($data['type'] == 'siswa') ? $data['nisn'] : null;
+    $kode_guru = ($data['type'] == 'guru') ? $data['kode_guru'] : null;
 
-    $stmt->bind_param("ssssssssssss", 
+    $stmt->bind_param("ssssssss", 
         $kode_member,
         $data['username'],
         $hashed_password,
         $data['name'],
         $data['type'],
-        $data['nisn'],
-        $data['nis'],
-        $data['nuptk'],
-        $data['nip'],
-        $data['kelas'],
-        $keterangan,
+        $nisn,
+        $kode_guru,
         $data['status']
     );
     return $stmt->execute();
 }
 
 function updateMember($conn, $data) {
+    // Siapkan parameter
+    $nisn = ($data['type'] == 'siswa') ? $data['nisn'] : null;
+    $kode_guru = ($data['type'] == 'guru') ? $data['kode_guru'] : null;
+
     if (!empty($data['password'])) {
         $sql = "UPDATE members SET 
                     username = ?, password = ?, name = ?, type = ?, 
-                    nisn = ?, nis = ?, nuptk = ?, nip = ?, 
-                    kelas = ?, keterangan = ?, status = ?
+                    nisn = ?, kode_guru = ?, status = ?
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
         
         $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
         
-        $keterangan = ($data['type'] == 'guru') ? $data['keterangan'] : null;
-        
-        $stmt->bind_param("sssssssssssi", 
+        $stmt->bind_param("sssssssi", 
             $data['username'], $hashed_password, $data['name'], $data['type'],
-            $data['nisn'], $data['nis'], $data['nuptk'], $data['nip'],
-            $data['kelas'], $keterangan, $data['status'],
+            $nisn, $kode_guru, $data['status'],
             $data['id']
         );
     } else {
         $sql = "UPDATE members SET 
                     username = ?, name = ?, type = ?, 
-                    nisn = ?, nis = ?, nuptk = ?, nip = ?, 
-                    kelas = ?, keterangan = ?, status = ?
+                    nisn = ?, kode_guru = ?, status = ?
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
         
-        $keterangan = ($data['type'] == 'guru') ? $data['keterangan'] : null;
-        
-        $stmt->bind_param("ssssssssssi", 
+        $stmt->bind_param("ssssssi", 
             $data['username'], $data['name'], $data['type'],
-            $data['nisn'], $data['nis'], $data['nuptk'], $data['nip'],
-            $data['kelas'], $keterangan, $data['status'],
+            $nisn, $kode_guru, $data['status'],
             $data['id']
         );
     }
